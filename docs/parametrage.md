@@ -5,6 +5,15 @@ import du CV (PDF, Word ou texte), analyse du CV par l'IA qui propose profil et 
 vérification des critères, puis sources recommandées pour le pays. Tout reste ensuite
 modifiable dans l'onglet **Paramètres**, organisé en quatre groupes : Profil et CV, Documents, Recherche (critères, pistes complémentaires, sources) et Apprentissage et données.
 
+<p>
+<img src="screenshots/settings-mobile.png" width="200" alt="Complétude">
+<img src="screenshots/tuto-12-tracks.png" width="200" alt="Pistes">
+<img src="screenshots/tuto-11-documents.png" width="200" alt="Documents">
+<img src="screenshots/tuto-14-learning.png" width="200" alt="Apprentissage">
+</p>
+
+Pas à pas : [tutoriel.md](tutoriel.md).
+
 | Section | Contenu |
 |---|---|
 | Profil et CV | Import et texte du CV, analyse avec propositions à appliquer, profil utilisé par l'IA, traduction du CV en sept langues (copie ou téléchargement) |

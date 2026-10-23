@@ -81,4 +81,36 @@ st.set("memos", "m-demo1", {"id": "m-demo1", "text": "Appel avec une ancienne co
 st.set("coach", "momentum", {"goals": {"applied": 3, "triaged": 15, "network": 2}, "network": {}, "wins": [{"at": iso(2), "text": "Recommandation obtenue pour Nordline Robotics"}], "active_days": [day(-1), day(0)]})
 st.set("geo", "cache", {"home": {"label": "Nantes", "lat": 47.205, "lon": -1.545, "src": cfg["home_address"]}, "places": {}})
 st.set("geo", "basemap", {"url": "/basemap.json"})
+st.set("prep", "nordline-em-plateforme", {"sheet": """## L'entreprise et le poste
+Nordline Robotics (fictive) fabrique des robots logistiques ; le poste pilote deux équipes plateforme.
+- À vérifier : taille des équipes, budget de recrutement, place de l'IA embarquée dans la feuille de route.
+
+## Vos arguments
+- Fiabilisation d'une plateforme SaaS : disponibilité portée de 99,5 à 99,9 %.
+- Recrutement et structuration d'une équipe de 12 personnes en 18 mois.
+
+## Questions probables
+1. Comment arbitrez-vous entre dette technique et nouvelles fonctions ?
+2. Racontez un incident majeur et ce que vous en avez tiré.
+
+## Questions à poser
+- Quels indicateurs mesurent la réussite du poste à six mois ?
+""", "updated_at": iso(1)})
+assets_dir = data_dir / "assets"
+assets_dir.mkdir(exist_ok=True)
+pdf = b"%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF"
+for aid, name, kind, lang, text in [
+    ("a" * 32, "CV Alex Martin (FR).pdf", "cv", "fr", "CV fictif."),
+    ("b" * 32, "CV Alex Martin (EN).pdf", "cv", "en", "Fictional CV."),
+    ("c" * 32, "Lettre - Aurora Énergie - Head of Product (fr).txt", "letter", "fr", "Lettre fictive de démonstration."),
+]:
+    ctype = "application/pdf" if name.endswith(".pdf") else "text/plain"
+    (assets_dir / aid).write_bytes(pdf if ctype == "application/pdf" else text.encode())
+    (assets_dir / (aid + ".type")).write_text(ctype)
+    st.set("documents", "d-" + aid[:6], {"id": "d-" + aid[:6], "name": name, "filename": name, "kind": kind, "lang": lang, "asset_id": aid,
+                                          "size": 2048, "content_type": ctype, "created_at": iso(3), "text": text})
+st.set("config", "learned", {"lessons": [
+    {"text": "Les postes d'engineering manager en entreprise industrielle sont retenus plus souvent que ceux des ESN.", "effect": "+5", "evidence": "4 offres retenues, 2 écartées pour « ESN »"},
+    {"text": "Les offres sans télétravail au-delà de 40 minutes de trajet sont écartées.", "effect": "-8", "evidence": "3 offres écartées pour « trajet »"}],
+    "rejected": [], "updated_at": iso(1)})
 print(f"Données de démonstration écrites dans {data_dir}")

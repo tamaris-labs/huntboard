@@ -28,6 +28,8 @@ reste qu'un suivi manuel des candidatures.**
   recherche web intégrée) ou d'une API compatible OpenAI (OpenAI, Gemini, Mistral, Ollama en
   local, sans recherche web).
 
+Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
+
 ## Les fonctions
 
 ### Offres et veille quotidienne

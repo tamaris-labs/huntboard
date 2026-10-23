@@ -84,7 +84,7 @@ add it as a skill in Claude, then ask "Set up my Huntboard". See [kit/README.md]
 
 ## Docs
 
-[Presentation](docs/presentation.md) · [Architecture](docs/architecture.md) ·
+[Presentation](docs/presentation.md) · [Tutorial (FR)](docs/tutoriel.md) · [Architecture](docs/architecture.md) ·
 [Deployment](docs/deploiement.md) · [Settings](docs/parametrage.md) ·
 [Job sources by country](docs/sources.md) · [Platform and API limits](docs/limitations.md) ·
 [Contributing with Claude Code](CLAUDE.md)
@@ -124,5 +124,5 @@ artefacts et les tâches planifiées. Application autonome : une clé d'API (Ant
 ou API compatible OpenAI).
 
 Deux distributions partagent la même page : le **kit Claude** et l'**application autonome**
-(FastAPI, SQLite, Docker). Présentation détaillée : [docs/presentation.md](docs/presentation.md).
+(FastAPI, SQLite, Docker). Présentation détaillée : [docs/presentation.md](docs/presentation.md) ; prise en main pas à pas : [docs/tutoriel.md](docs/tutoriel.md).
 Licence MIT.
