@@ -2,6 +2,10 @@
 # Contexte de construction : racine du dépôt (voir docker-compose.yml).
 FROM python:3.12-slim
 
+LABEL org.opencontainers.image.source="https://github.com/tamaris-labs/huntboard" \
+      org.opencontainers.image.description="Huntboard: job-search board with daily scored watch, pipeline and AI assistant" \
+      org.opencontainers.image.licenses="MIT"
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     HUNTBOARD_DATA_DIR=/data
