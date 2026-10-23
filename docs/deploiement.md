@@ -80,7 +80,7 @@ Dépôt : `tamaris-labs/huntboard`. Deux workflows GitHub Actions (`.github/work
 | Workflow | Déclencheur | Rôle |
 |---|---|---|
 | `ci.yml` | chaque push ou pull request | tests Python, vérification syntaxique de la page et du shim, recherche de données personnelles |
-| `release.yml` | tag `v*` (ex. `v2.2.0`) | image Docker publiée sur `ghcr.io/tamaris-labs/huntboard`, release GitHub avec `huntboard-skill.zip` (kit Claude) |
+| `release.yml` | tag `v*` (ex. `v2.2.0`), ou lancement manuel depuis l'onglet Actions avec un numéro de version | image Docker publiée sur `ghcr.io/tamaris-labs/huntboard`, release GitHub avec `huntboard-skill.zip` (kit Claude) |
 
 Publier une version :
 
