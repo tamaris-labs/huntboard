@@ -26,7 +26,7 @@ only manual tracking remains.
 | Distribution | What you need |
 |---|---|
 | **Claude kit** | A Claude account whose plan allows artifacts and scheduled tasks. The page uses your Claude usage (you are asked once to allow it). A mail connector (Gmail) is optional but recommended for e-mail alerts. |
-| **Self-hosted app** | An API key: **Anthropic** (recommended — the only provider with built-in web search for the watch), or any OpenAI-compatible API (OpenAI, Gemini, Mistral, local Ollama — no web search, lower quality). Set a spending cap with your provider. |
+| **Self-hosted app** | An API key: **Anthropic** (recommended), or any OpenAI-compatible API (OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter) or a local model (Ollama, LM Studio). Web search comes from the provider when it has one (Claude, OpenAI, Gemini, Grok, OpenRouter) or from Brave, Tavily or a self-hosted SearXNG — so a fully local setup works too. See [AI engines and web search](docs/moteurs-ia.md). Set a spending cap with your provider. |
 
 ## What it does
 
@@ -52,7 +52,9 @@ only manual tracking remains.
   searchable offer picker, inspired by your saved letters.
 - **Interviews** — brief, mock interview with scored feedback, debrief; read aloud.
 - **Assisted setup** — onboarding, CV analysis into criteria, settings completeness gauge with
-  an AI review, recommended sources for ten countries.
+  an AI review, recommended sources for ten countries, **AI source suggestions** tailored to your
+  profile and to each source's yield, checked on the web (a weekly suggestion comes with the
+  Monday watch).
 
 ## Two ways to run it
 
@@ -91,7 +93,7 @@ add it as a skill in Claude, then ask "Set up my Huntboard". See [kit/README.md]
 ## Docs
 
 [Presentation](docs/presentation.md) · [Tutorial (FR)](docs/tutoriel.md) · [Architecture](docs/architecture.md) ·
-[Deployment](docs/deploiement.md) · [Settings](docs/parametrage.md) ·
+[Deployment](docs/deploiement.md) · [AI engines and web search](docs/moteurs-ia.md) · [Settings](docs/parametrage.md) ·
 [Job sources by country](docs/sources.md) · [Platform and API limits](docs/limitations.md) ·
 [Contributing with Claude Code](CLAUDE.md)
 
@@ -127,7 +129,9 @@ et lecture à voix haute. Interface en français ou en anglais, utilisable sur t
 **Prérequis : une connexion à une IA.** Sans elle, l'application perd l'essentiel de son
 intérêt (ni veille, ni notation, ni assistant). Kit Claude : un compte Claude permettant les
 artefacts et les tâches planifiées. Application autonome : une clé d'API (Anthropic recommandé,
-ou API compatible OpenAI).
+ou OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter) ou un modèle local (Ollama), avec la
+recherche web du fournisseur ou un service externe (Brave, Tavily, SearXNG) :
+[moteurs-ia.md](docs/moteurs-ia.md).
 
 Deux distributions partagent la même page : le **kit Claude** et l'**application autonome**
 (FastAPI, SQLite, Docker). Présentation détaillée : [docs/presentation.md](docs/presentation.md) ; prise en main pas à pas : [docs/tutoriel.md](docs/tutoriel.md).

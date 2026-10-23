@@ -84,6 +84,38 @@ def fetch_headers(days: int = 2, limit: int = 400) -> list[Mail]:
     return out
 
 
+def fetch_matching(days: int, keep, limit: int = 30) -> list[Mail]:
+    """E-mails récents dont l'en-tête vérifie keep(sender, subject), corps compris (lecture seule)."""
+    if not settings.imap_enabled:
+        return []
+    since = (datetime.now() - timedelta(days=days)).strftime("%d-%b-%Y")
+    out: list[Mail] = []
+    with imaplib.IMAP4_SSL(settings.imap_host, settings.imap_port) as box:
+        box.login(settings.imap_user, settings.imap_password)
+        box.select(settings.imap_folder, readonly=True)
+        typ, data = box.search(None, "SINCE", since)
+        ids = data[0].split() if typ == "OK" and data and data[0] else []
+        for mid in reversed(ids[-400:]):
+            if len(out) >= limit:
+                break
+            typ, d = box.fetch(mid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])")
+            if typ != "OK" or not d or not isinstance(d[0], tuple):
+                continue
+            h = email.message_from_bytes(d[0][1])
+            if not keep(_decode(h.get("From")), _decode(h.get("Subject"))):
+                continue
+            typ, d = box.fetch(mid, "(BODY.PEEK[])")
+            if typ != "OK" or not d or not isinstance(d[0], tuple):
+                continue
+            msg = email.message_from_bytes(d[0][1])
+            try:
+                date = parsedate_to_datetime(msg.get("Date")).isoformat()
+            except Exception:  # noqa: BLE001
+                date = ""
+            out.append(Mail(_decode(msg.get("From")), _decode(msg.get("Subject")), date, _body(msg)))
+    return out
+
+
 def fetch_alerts(days: int = 2, senders: list[str] | None = None, limit: int = 60) -> list[Mail]:
     if not settings.imap_enabled:
         return []

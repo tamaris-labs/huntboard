@@ -39,9 +39,18 @@ Codespaces `LLM_API_KEY`. L'image publiée peut aussi y être testée :
 `docker run --rm -p 8001:8000 ghcr.io/tamaris-labs/huntboard:latest`. Arrêtez le Codespace après
 usage pour préserver le quota gratuit.
 
+## Moteur d'IA et recherche web
+
+Claude (API Anthropic) est recommandé, mais toute API compatible OpenAI convient : OpenAI,
+Gemini, Mistral, Grok, DeepSeek, OpenRouter, ou un modèle local (Ollama, LM Studio). La
+recherche web se règle à part : recherche intégrée du fournisseur, ou service externe (Brave,
+Tavily, SearXNG auto-hébergé) utilisable avec tout modèle. Tableau des moteurs, exemples de
+`.env` et installation de SearXNG : **[moteurs-ia.md](moteurs-ia.md)**.
+
 ## Réglages depuis l'interface
 
-Le moteur d'IA, la messagerie et l'adresse de notification se règlent aussi dans l'application :
+Le moteur d'IA (avec un menu de préréglages d'adresse), la recherche web, la messagerie et
+l'adresse de notification se règlent aussi dans l'application :
 Réglages › Apprentissage et données › **Connexions** (bouton *Tester* pour le modèle). Ces
 valeurs sont enregistrées dans `settings.json`, dans le dossier de données (droits 600), et
 priment sur le `.env`. Les secrets ne sont jamais renvoyés à l'interface. Protégez l'accès avec
@@ -124,7 +133,9 @@ docker compose pull && docker compose up -d                              # mise 
 Avec Claude, un passage de veille consomme une quinzaine de recherches web (0,01 $ chacune)
 et quelques dizaines de milliers de jetons. Les tâches d'extraction utilisent le modèle
 rapide (`LLM_MODEL_QUICK`), la notation et les entretiens le modèle avancé. Réduisez
-`WEB_SEARCH_MAX_USES` ou choisissez des modèles plus légers pour limiter la dépense.
+`WEB_SEARCH_MAX_USES` ou choisissez des modèles plus légers pour limiter la dépense. Les autres
+moteurs et la solution gratuite entièrement locale (Ollama et SearXNG) sont comparés dans
+[moteurs-ia.md](moteurs-ia.md#5-coûts-et-confidentialité).
 
 ## Dépannage
 

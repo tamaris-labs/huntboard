@@ -216,6 +216,8 @@
     testLlm: () => fetch("/api/app/llm/test", { method: "POST", credentials: "same-origin" }).then(j),
     testMail: () => fetch("/api/app/imap/test", { method: "POST", credentials: "same-origin" }).then(j),
     runWatch: () => fetch("/api/veille/run", { method: "POST", credentials: "same-origin" }),
+    // Vérifie les sources suggérées (adresses joignables) et, avec more > 0, en cherche d'autres sur le web.
+    verifySources: (items, more = 0) => fetch("/api/app/sources/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items, more }), credentials: "same-origin" }).then(j),
   };
   window.claude = { use: async (name) => caps[name] || null };
 

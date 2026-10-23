@@ -41,6 +41,7 @@ Conséquences pratiques :
 | Fichiers | Le sélecteur de fichiers est bloqué dans certaines applications mobiles ; l'import se fait alors en envoyant le fichier dans la conversation. Les documents stockés acceptent PDF, texte et images, pas les fichiers Word. |
 | Carte | Pas de fond de carte (les tuiles cartographiques sont des ressources externes). La carte est un « radar » centré sur le domicile, avec des distances à vol d'oiseau ; les coordonnées sont fournies par la veille ou estimées par l'IA, donc approximatives à l'échelle de la ville. |
 | Dictée vocale | La dictée intégrée utilise la reconnaissance vocale du navigateur (Chrome, Edge, Safari) ; dans une vue qui n'autorise pas le micro, la page propose d'utiliser le micro du clavier du téléphone. La lecture à voix haute fonctionne partout, sans réseau. |
+| Accès au web depuis la page | Aucun, y compris pour l'IA appelée par la page : elle ne dispose que des outils de la page (lecture des offres, notes, réglages). Les suggestions de sources viennent donc des connaissances du modèle ; leur vérification sur le web passe par une tâche planifiée dédiée, déclenchée par le connecteur « Claude Code Remote » (autorisation demandée au premier usage). |
 | Assistant | Ses actions sont des propositions : rien n'est modifié sans validation. Chaque question consomme plusieurs appels au modèle (consultation des données puis réponse). |
 | Notifications | Notification de fin de tâche sur le téléphone ; pas de widget Android ou iOS. |
 
@@ -49,9 +50,10 @@ Conséquences pratiques :
 | Sujet | Limite |
 |---|---|
 | Messagerie | Lecture IMAP en lecture seule ; Gmail et Outlook exigent un **mot de passe d'application** (double authentification activée). |
-| Recherche web | Avec Claude, outil de recherche web de l'API Anthropic, facturé à la requête (10 $ pour 1 000 recherches à ce jour, en plus des jetons). Avec OpenAI, Gemini ou Ollama, repli sur une lecture HTTP simple des pages des sources, bien moins complète. |
-| Modèles locaux (Ollama) | Pas de recherche web ; qualité de notation et de rédaction inférieure. |
+| Recherche web | Recherche intégrée du fournisseur avec Claude (10 $ pour 1 000 recherches à ce jour, en plus des jetons), OpenAI, Gemini, Grok ou OpenRouter ; pour Mistral, DeepSeek et les modèles locaux, service externe à configurer (Brave, Tavily ou SearXNG auto-hébergé). Sans recherche web, repli sur une lecture HTTP simple des pages des sources, bien moins complète. Voir [moteurs-ia.md](moteurs-ia.md). |
+| Modèles locaux (Ollama, LM Studio) | Recherche web par SearXNG ou un service externe ; assistant avec outils seulement si le modèle sait les appeler ; qualité de notation et de rédaction inférieure aux grands modèles. |
 | Coûts | Chaque passage de veille note les offres par lots de 15 ; prévoir quelques centimes à quelques dizaines de centimes par jour selon le volume et le modèle. |
+| Sources | Vérification des adresses par le serveur ; recherche de sources sur le web dès qu'une recherche web est disponible (sinon suggestions d'après les connaissances du modèle, adresses testées). |
 | Carte | Mêmes principes que dans le kit ; sans clé d'IA, seules les offres pour lesquelles la veille a fourni des coordonnées sont placées. |
 
 ## 4. Choix volontairement écartés

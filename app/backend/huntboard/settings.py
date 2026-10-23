@@ -32,6 +32,11 @@ class Settings:
     model_default: str = field(default_factory=lambda: _env("LLM_MODEL_DEFAULT", "claude-sonnet-5-5"))
     model_complex: str = field(default_factory=lambda: _env("LLM_MODEL_COMPLEX", "claude-opus-5-5"))
     web_search_max_uses: int = field(default_factory=lambda: int(_env("WEB_SEARCH_MAX_USES", "15")))
+    # Recherche web : auto (recherche intégrée du fournisseur si elle existe, sinon service externe s'il est
+    # configuré), native, brave, tavily, searxng ou none (lecture des pages des sources seulement).
+    web_search: str = field(default_factory=lambda: _env("WEB_SEARCH", "auto").lower())
+    search_api_key: str = field(default_factory=lambda: _env("SEARCH_API_KEY"))  # Brave ou Tavily
+    searxng_url: str = field(default_factory=lambda: _env("SEARXNG_URL"))  # ex. http://searxng:8080
 
     # Messagerie (lecture seule)
     imap_host: str = field(default_factory=lambda: _env("IMAP_HOST"))
@@ -119,6 +124,8 @@ class Settings:
             "imap": {"enabled": self.imap_enabled, "host": self.imap_host, "port": self.imap_port, "user": self.imap_user,
                      "folder": self.imap_folder, "password_set": bool(self.imap_password),
                      "alert_senders": self.alert_senders, "follow_ups": self.follow_ups},
+            "search": {"mode": self.web_search, "searxng_url": self.searxng_url, "key_set": bool(self.search_api_key),
+                       "key_hint": hint(self.search_api_key), "effective": web_search_backend(self)},
             "notify": {"enabled": bool(self.notify_url), "url_set": bool(self.notify_url)},
             "veille": {"enabled": self.veille_enabled, "cron": self.veille_cron, "timezone": self.timezone},
         }
@@ -126,8 +133,46 @@ class Settings:
 
 EDITABLE = {"llm_provider", "llm_api_key", "llm_base_url", "model_quick", "model_default", "model_complex",
             "imap_host", "imap_port", "imap_user", "imap_password", "imap_folder", "notify_url",
-            "alert_senders", "follow_ups"}
-SECRETS = {"llm_api_key", "imap_password", "notify_url"}
+            "alert_senders", "follow_ups", "web_search", "search_api_key", "searxng_url"}
+SECRETS = {"llm_api_key", "imap_password", "notify_url", "search_api_key"}
+
+SEARCH_MODES = ("auto", "native", "brave", "tavily", "searxng", "none")
+
+
+def native_search_kind(s: "Settings") -> str:
+    """Recherche web intégrée au fournisseur configuré : anthropic, openai, xai, openrouter, gemini, ou vide."""
+    if not s.llm_enabled:
+        return ""
+    if s.llm_provider == "anthropic":
+        return "anthropic"
+    base = (s.llm_base_url or "").lower()
+    if not base or "api.openai.com" in base:
+        return "openai"
+    for key, kind in (("api.x.ai", "xai"), ("openrouter.ai", "openrouter"), ("generativelanguage.googleapis.com", "gemini")):
+        if key in base:
+            return kind
+    return ""
+
+
+def web_search_backend(s: "Settings") -> str:
+    """Mode de recherche web réellement utilisé : native:<fournisseur>, brave, tavily, searxng ou none."""
+    mode = s.web_search if s.web_search in SEARCH_MODES else "auto"
+    if mode == "none" or not s.llm_enabled:
+        return "none"
+    if mode in ("auto", "native"):
+        kind = native_search_kind(s)
+        if kind:
+            return "native:" + kind
+        if mode == "native":
+            return "none"
+        if s.searxng_url:
+            return "searxng"
+        if s.search_api_key:
+            return "tavily" if s.search_api_key.startswith("tvly-") else "brave"
+        return "none"
+    if mode == "searxng":
+        return "searxng" if s.searxng_url else "none"
+    return mode if s.search_api_key else "none"
 
 settings = Settings()
 settings.load_overrides()

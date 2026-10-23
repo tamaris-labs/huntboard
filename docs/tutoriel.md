@@ -76,6 +76,10 @@ sur un élément ouvre le bon champ.
   sources adaptées.
 - **Adresse du domicile** (Recherche › Critères) : privée, elle sert à la carte et aux temps de
   trajet. *Placer sur la carte* permet de la positionner précisément.
+- **Sources** (Recherche › Sources) : *Suggérer des sources avec l'IA* propose des sources
+  adaptées à votre profil et signale celles qui ne rapportent rien ; *Vérifier et compléter sur
+  le web* teste les adresses. Cochez, puis *Ajouter la sélection*. Chaque lundi, la veille en
+  propose une ou deux autres. Détails : [parametrage.md](parametrage.md#suggestions-de-sources).
 - **Alertes e-mail** : créez sur LinkedIn, Indeed ou HelloWork des alertes précises (intitulé et
   zone) ; la veille les lit dans votre messagerie, sans jamais se connecter à vos comptes.
 

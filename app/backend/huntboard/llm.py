@@ -1,9 +1,13 @@
 """Couche d'accès au modèle de langage, indépendante du fournisseur.
 
 Fournisseurs pris en charge :
-- ``anthropic`` : API Claude (recommandé ; seul fournisseur offrant la recherche web intégrée) ;
+- ``anthropic`` : API Claude (recommandé) ;
 - ``openai`` : toute API compatible OpenAI (OpenAI, Gemini via son point d'accès compatible,
-  Ollama, Mistral, etc.), choisie avec ``LLM_BASE_URL``.
+  Mistral, Grok, OpenRouter, Ollama, etc.), choisie avec ``LLM_BASE_URL``.
+
+Recherche web (``web_research_json``) : recherche intégrée du fournisseur quand elle existe
+(Anthropic, OpenAI, Grok, OpenRouter, Gemini), sinon service externe (Brave, Tavily, SearXNG)
+interrogé par le modèle comme un outil — ce qui fonctionne aussi avec un modèle local.
 
 Trois niveaux de modèle : ``quick`` (extraction, tri), ``default`` (conversation),
 ``complex`` (notation fine, préparation d'entretien).
@@ -157,14 +161,35 @@ def parse_json(text: str) -> Any:
     raise ValueError("Réponse sans JSON exploitable")
 
 
+JSON_TAIL = "\n\nTermine par un unique bloc JSON valide, sans texte après."
+
+
 def web_research_json(prompt: str, tier: str = "default", country: str = "FR",
                       allowed_domains: list[str] | None = None) -> Any:
-    """Recherche web menée par Claude (outil web_search de l'API), réponse finale en JSON.
+    """Recherche web menée par le modèle, réponse finale en JSON.
 
-    Disponible uniquement avec le fournisseur ``anthropic``.
+    Le moyen dépend de ``settings.web_search`` et du fournisseur (voir ``web_search_backend``) ;
+    lève ``LLMUnavailable`` quand aucune recherche web n'est disponible.
     """
-    if settings.llm_provider != "anthropic" or not settings.llm_api_key:
-        raise LLMUnavailable("La recherche web intégrée nécessite le fournisseur anthropic.")
+    from .settings import web_search_backend
+
+    backend = web_search_backend(settings)
+    if backend == "none":
+        raise LLMUnavailable("Aucune recherche web configurée.")
+    if backend == "native:anthropic":
+        text = _research_anthropic(prompt, tier, country, allowed_domains)
+    elif backend in ("native:openai", "native:xai"):
+        text = _research_responses(prompt, tier)
+    elif backend == "native:openrouter":
+        text = _research_openrouter(prompt, tier)
+    elif backend == "native:gemini":
+        text = _research_gemini(prompt, tier)
+    else:
+        text = _research_with_tools(prompt, tier, backend, country)
+    return parse_json(text)
+
+
+def _research_anthropic(prompt: str, tier: str, country: str, allowed_domains: list[str] | None) -> str:
     import anthropic
 
     client = anthropic.Anthropic(api_key=settings.llm_api_key)
@@ -176,13 +201,126 @@ def web_research_json(prompt: str, tier: str = "default", country: str = "FR",
     }
     if allowed_domains:
         tool["allowed_domains"] = allowed_domains
-    messages: list[dict[str, Any]] = [
-        {"role": "user", "content": prompt + "\n\nTermine par un unique bloc JSON valide, sans texte après."}
-    ]
+    messages: list[dict[str, Any]] = [{"role": "user", "content": prompt + JSON_TAIL}]
     for _ in range(4):  # une recherche longue peut être mise en pause par l'API
         resp = client.messages.create(model=_model(tier), max_tokens=8192, tools=[tool], messages=messages)
         if resp.stop_reason != "pause_turn":
             break
         messages = messages + [{"role": "assistant", "content": resp.content}]
-    text = "".join(getattr(b, "text", "") for b in resp.content if getattr(b, "type", "") == "text")
-    return parse_json(text)
+    return "".join(getattr(b, "text", "") for b in resp.content if getattr(b, "type", "") == "text")
+
+
+def _http():
+    import httpx
+
+    return httpx.Client(timeout=180)
+
+
+def _base(default: str) -> str:
+    return (settings.llm_base_url or default).rstrip("/")
+
+
+def _research_responses(prompt: str, tier: str) -> str:
+    """OpenAI et Grok (xAI) : API Responses avec l'outil web_search."""
+    url = _base("https://api.openai.com/v1") + "/responses"
+    body = {"model": _model(tier), "input": prompt + JSON_TAIL, "tools": [{"type": "web_search"}]}
+    with _http() as c:
+        r = c.post(url, json=body, headers={"Authorization": f"Bearer {settings.llm_api_key}"})
+        r.raise_for_status()
+        data = r.json()
+    if data.get("output_text"):
+        return data["output_text"]
+    return "".join(part.get("text", "") for item in data.get("output") or [] if item.get("type") == "message"
+                   for part in item.get("content") or [] if part.get("type") in ("output_text", "text"))
+
+
+def _research_openrouter(prompt: str, tier: str) -> str:
+    """OpenRouter : suffixe « :online » sur le modèle (recherche web pour tout modèle)."""
+    from openai import OpenAI
+
+    model = _model(tier)
+    model = model if model.endswith(":online") else model + ":online"
+    client = OpenAI(api_key=settings.llm_api_key, base_url=settings.llm_base_url)
+    r = client.chat.completions.create(model=model, max_tokens=8192, messages=[{"role": "user", "content": prompt + JSON_TAIL}])
+    return r.choices[0].message.content or ""
+
+
+def _research_gemini(prompt: str, tier: str) -> str:
+    """Gemini : API native generateContent avec l'ancrage Google Search."""
+    model = _model(tier).removeprefix("models/")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    body = {"contents": [{"role": "user", "parts": [{"text": prompt + JSON_TAIL}]}], "tools": [{"google_search": {}}]}
+    with _http() as c:
+        r = c.post(url, json=body, headers={"x-goog-api-key": settings.llm_api_key})
+        r.raise_for_status()
+        data = r.json()
+    parts = ((data.get("candidates") or [{}])[0].get("content") or {}).get("parts") or []
+    return "".join(p.get("text", "") for p in parts)
+
+
+# Service de recherche externe, interrogé par le modèle comme un outil ---------------
+def search_web(query: str, backend: str, country: str = "FR", count: int = 8) -> list[dict[str, str]]:
+    """Résultats [{title, url, snippet}] de Brave, Tavily ou SearXNG."""
+    with _http() as c:
+        if backend == "brave":
+            r = c.get("https://api.search.brave.com/res/v1/web/search", params={"q": query, "count": count, "country": country.lower()},
+                      headers={"X-Subscription-Token": settings.search_api_key, "Accept": "application/json"})
+            r.raise_for_status()
+            items = (r.json().get("web") or {}).get("results") or []
+            return [{"title": i.get("title", ""), "url": i.get("url", ""), "snippet": i.get("description", "")} for i in items[:count]]
+        if backend == "tavily":
+            r = c.post("https://api.tavily.com/search", json={"query": query, "max_results": count},
+                       headers={"Authorization": f"Bearer {settings.search_api_key}"})
+            r.raise_for_status()
+            return [{"title": i.get("title", ""), "url": i.get("url", ""), "snippet": i.get("content", "")} for i in (r.json().get("results") or [])[:count]]
+        if backend == "searxng":
+            r = c.get(settings.searxng_url.rstrip("/") + "/search", params={"q": query, "format": "json"})
+            r.raise_for_status()
+            return [{"title": i.get("title", ""), "url": i.get("url", ""), "snippet": i.get("content", "")} for i in (r.json().get("results") or [])[:count]]
+    raise LLMUnavailable(f"Service de recherche inconnu : {backend}")
+
+
+def read_page(url: str, limit: int = 12000) -> str:
+    import httpx
+
+    from .sources.email_imap import html_to_text
+
+    if "linkedin.com" in url:
+        return "Page non lue : LinkedIn n'est jamais lu directement."
+    r = httpx.get(url, timeout=20, follow_redirects=True, headers={"User-Agent": "Mozilla/5.0 (Huntboard; personal job search)"})
+    r.raise_for_status()
+    return " ".join(html_to_text(r.text).split())[:limit]
+
+
+RESEARCH_TOOLS = [
+    {"name": "web_search", "description": "Search the web. Returns titles, URLs and snippets.",
+     "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}},
+    {"name": "read_page", "description": "Read the text of a public web page.",
+     "input_schema": {"type": "object", "properties": {"url": {"type": "string"}}, "required": ["url"]}},
+]
+
+
+def _research_with_tools(prompt: str, tier: str, backend: str, country: str, step=None, search=None, read=None) -> str:
+    """Boucle outil : le modèle (quel qu'il soit, local compris) cherche et lit des pages, puis répond."""
+    step = step or tool_step
+    search = search or (lambda q: search_web(q, backend, country))
+    read = read or read_page
+    messages: list[dict[str, Any]] = [{"role": "user", "content": prompt + "\n\nUse the web_search and read_page tools as needed." + JSON_TAIL}]
+    budget = max(4, settings.web_search_max_uses)
+    for _ in range(budget):
+        r = step(messages, RESEARCH_TOOLS, tier=tier, max_tokens=8192)
+        calls = [b for b in r["content"] if b.get("type") == "tool_use"]
+        if not calls:
+            return "".join(b.get("text", "") for b in r["content"] if b.get("type") == "text")
+        messages.append({"role": "assistant", "content": r["content"]})
+        results = []
+        for b in calls:
+            try:
+                out: Any = search(str(b["input"].get("query", ""))) if b["name"] == "web_search" else read(str(b["input"].get("url", "")))
+            except Exception as e:  # noqa: BLE001
+                out = f"Erreur : {e}"
+            results.append({"type": "tool_result", "tool_use_id": b["id"], "content": out if isinstance(out, str) else json.dumps(out, ensure_ascii=False)})
+        messages.append({"role": "user", "content": results})
+    messages.append({"role": "user", "content": "Stop searching now and give the final answer." + JSON_TAIL})
+    r = step(messages, RESEARCH_TOOLS, tier=tier, max_tokens=8192)
+    return "".join(b.get("text", "") for b in r["content"] if b.get("type") == "text")

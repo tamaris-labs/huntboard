@@ -208,3 +208,159 @@ def test_follow_up_events():
     assert [e["text"] for e in ev["a"]] == ["E-mail reçu de RH Aurora Énergie : Votre candidature"]
     assert [e["text"] for e in ev["b"]] == ["E-mail reçu de Paul : Étude de cas"]  # « Planning » déjà connu ; domaine du contact reconnu
     assert "c" not in ev
+
+
+def test_application_acks():
+    from types import SimpleNamespace as M
+
+    from huntboard.veille import application_acks, is_ack, response_weeks
+
+    offers = {"nordline-chef-de-projet-ia": {"company": "Nordline", "title": "Chef de projet IA"},
+              "nordline-architecte-data": {"company": "Nordline", "title": "Architecte data"},
+              "aurora-pmo": {"company": "Aurora Énergie", "title": "PMO"}}
+    notes = {"aurora-pmo": {"status": "creuser", "events": [{"at": "x", "text": "À creuser"}]}}
+    acks = [
+        M(sender="Jobboard <contact@emails.jobboard.example.com>", subject="Votre candidature est arrivée chez Nordline",
+          date="2026-10-23T17:53:00+00:00", text="Poste : Chef de projet IA. Bonne chance !"),
+        M(sender="Nordline <notification@ats.example.com>", subject="Merci pour votre candidature",
+          date="2026-10-23T17:54:00+00:00", text="Nordline confirme votre candidature au poste de Chef de projet IA. "
+          "Sans réponse sous 3 semaines, considérez qu'elle n'est pas retenue."),
+        M(sender="Aurora Énergie <rh@aurora.example.com>", subject="Accusé de réception", date="2026-10-23T09:00:00+00:00",
+          text="Nous avons bien reçu votre candidature, merci pour votre candidature."),
+        M(sender="AG <ag@workday.example.com>", subject="ACME - Thank you for applying !", date="2026-10-23T17:34:00+00:00",
+          text="Thank you for applying to IT Product Manager (JR1)."),
+    ]
+    assert all(is_ack(m) for m in acks)
+    assert not is_ack(M(sender="x", subject="Suite à votre candidature", text="Malheureusement…", date=""))
+    assert not is_ack(M(sender="x", subject="Invitation à un entretien — votre candidature", text="", date=""))
+    assert response_weeks("sans réponse sous trois semaines") == 3
+
+    res = application_acks(acks, offers, notes, details=lambda m: {"company": "ACME", "title": "IT Product Manager", "reference": "JR1"})
+    n1, new1 = res["notes"]["nordline-chef-de-projet-ia"]
+    assert new1 and n1["status"] == "postule" and n1["applied_at"] == "2026-10-23"
+    assert len(n1["events"]) == 1  # deux accusés, une seule candidature (le plus ancien gagne)
+    assert "nordline-architecte-data" not in res["notes"]  # l'intitulé départage les offres d'une même entreprise
+    n2, new2 = res["notes"]["aurora-pmo"]
+    assert not new2 and n2["status"] == "creuser" and len(n2["events"]) == 2  # statut inchangé, événement ajouté
+    created = res["offers"]["acme-it-product-manager"]
+    assert created["tier"] == "pending" and created["source"] == "Candidature directe" and "JR1" in created["raw_text"]
+    assert res["notes"]["acme-it-product-manager"][0]["status"] == "postule"
+    again = application_acks(acks, offers, {**notes, "aurora-pmo": n2}, details=lambda m: {})
+    assert "aurora-pmo" not in again["notes"]  # déjà enregistrée
+
+
+def test_application_acks_due_date():
+    from types import SimpleNamespace as M
+
+    from huntboard.veille import application_acks
+
+    m = M(sender="Zeta <jobs@ats.example.com>", subject="Your application to Zeta", date="2026-10-23T10:00:00+00:00",
+          text="We have received your application. Without an answer within 3 weeks, consider it unsuccessful.")
+    res = application_acks([m], {"zeta-cto": {"company": "Zeta", "title": "CTO"}}, {})
+    note = res["notes"]["zeta-cto"][0]
+    assert note["next_due"] == "2026-11-13" and "3 semaines" in note["events"][0]["text"]
+
+
+def test_score_pending(monkeypatch):
+    from huntboard.veille import score_pending
+
+    s = Store(":memory:")
+    s.set("offers", "p1", {"id": "p1", "title": "PMO", "company": "Aurora", "url": "https://exemple.fr/o", "tier": "pending"})
+    s.set("offers", "p2", {"id": "p2", "title": "CTO", "company": "Zeta", "tier": "match", "score": 80})
+    seen = {}
+
+    def fake_score(config, learned, items):
+        seen["items"] = items
+        return [{**items[0], "score": 72, "tier": "match", "breakdown": {"geo": 20}, "reasons": "ok"}]
+
+    monkeypatch.setattr(veille, "score", fake_score)
+    assert score_pending(s, {}, {}, fetch=lambda url: "Texte de l'annonce") == 1
+    assert [i["id"] for i in seen["items"]] == ["p1"] and seen["items"][0]["posting_excerpt"] == "Texte de l'annonce"
+    d = s.data("offers", "p1")
+    assert d["tier"] == "match" and d["score"] == 72 and "posting_excerpt" not in d
+
+
+def test_check_source_statuses():
+    from huntboard.veille import check_source
+
+    ok = check_source({"name": "A", "url": "https://jobs.example.com/x"}, probe=lambda u: {"code": 200, "final_url": u, "title": "Jobs"})
+    assert ok["status"] == "ok" and ok["title"] == "Jobs"
+    mv = check_source({"name": "B", "url": "https://old.example.com"}, probe=lambda u: {"code": 200, "final_url": "https://new.example.org/careers"})
+    assert mv["status"] == "moved" and mv["url"] == "https://new.example.org/careers"
+    assert check_source({"name": "C", "url": "https://c.example.com"}, probe=lambda u: {"code": 403})["status"] == "blocked"
+    assert check_source({"name": "D", "url": "https://d.example.com"}, probe=lambda u: (_ for _ in ()).throw(OSError()))["status"] == "unreachable"
+    assert check_source({"name": "E", "url": ""})["status"] == "no_url"
+    assert check_source({"name": "F", "url": "https://www.linkedin.com/jobs"})["status"] == "not_checked"
+
+
+def test_source_yield_and_merge():
+    from huntboard.veille import merge_suggestions, source_yield
+
+    config = {"sources": [{"name": "HelloWork"}, {"name": "Cabinet Exemple"}],
+              "tracks": [{"id": "associes", "sources": [{"name": "Tandem - Les Deeptech"}]}]}
+    offers = {"a": {"source": "Alerte HelloWork"}, "b": {"source": "Alerte HelloWork"}, "c": {"source": "Web", "track": "x"}}
+    notes = {"a": {"status": "postule"}, "b": {"status": "ecartee"}}
+    y = {r["name"]: r for r in source_yield(config, offers, notes)}
+    assert y["HelloWork"]["found"] == 2 and y["HelloWork"]["kept"] == 1 and y["Cabinet Exemple"]["found"] == 0
+    doc = merge_suggestions({}, [{"name": "Tandem – Les Deeptech"}, {"name": "LesJeudis", "url": "https://x"}, {"name": "HelloWork"}], config, "ai")
+    assert [i["name"] for i in doc["items"]] == ["LesJeudis"] and doc["items"][0]["status"] == "unverified"
+    doc = merge_suggestions(doc, [{"name": "lesjeudis", "why": "Offres IT"}], config, "web")
+    assert len(doc["items"]) == 1 and doc["items"][0]["why"] == "Offres IT"
+
+
+def test_verify_endpoint_without_key(monkeypatch):
+    from huntboard import main
+
+    s = Store(":memory:")
+    monkeypatch.setattr(main, "store", s)
+    s.set("sources", "suggestions", {"items": [{"name": "X", "url": "", "status": "unverified"}]})
+    c = TestClient(main.app)
+    r = c.post("/api/app/sources/verify", json={"more": 3})
+    assert r.status_code == 200
+    doc = r.json()
+    assert doc["items"][0]["status"] == "no_url" and doc["verify"]["state"] == "done"
+    assert c.get("/api/db/sources/suggestions").status_code == 200
+
+
+def test_web_search_backend_selection():
+    from huntboard.settings import Settings, web_search_backend
+
+    def mk(**kw):
+        s = Settings()
+        for k, v in {"llm_api_key": "k", "llm_provider": "openai", "llm_base_url": "", "web_search": "auto",
+                     "search_api_key": "", "searxng_url": "", **kw}.items():
+            setattr(s, k, v)
+        return s
+
+    assert web_search_backend(mk(llm_provider="anthropic")) == "native:anthropic"
+    assert web_search_backend(mk()) == "native:openai"
+    assert web_search_backend(mk(llm_base_url="https://api.x.ai/v1")) == "native:xai"
+    assert web_search_backend(mk(llm_base_url="https://openrouter.ai/api/v1")) == "native:openrouter"
+    assert web_search_backend(mk(llm_base_url="https://generativelanguage.googleapis.com/v1beta/openai/")) == "native:gemini"
+    assert web_search_backend(mk(llm_base_url="https://api.mistral.ai/v1")) == "none"
+    assert web_search_backend(mk(llm_base_url="http://ollama:11434/v1", searxng_url="http://searxng:8080")) == "searxng"
+    assert web_search_backend(mk(llm_base_url="http://ollama:11434/v1", search_api_key="tvly-x")) == "tavily"
+    assert web_search_backend(mk(llm_base_url="http://ollama:11434/v1", search_api_key="BSAx")) == "brave"
+    assert web_search_backend(mk(web_search="brave", search_api_key="")) == "none"
+    assert web_search_backend(mk(web_search="searxng", searxng_url="http://s")) == "searxng"
+    assert web_search_backend(mk(web_search="none")) == "none"
+    assert web_search_backend(mk(web_search="native", llm_base_url="https://api.deepseek.com/v1", searxng_url="http://s")) == "none"
+
+
+def test_research_tool_loop():
+    from huntboard.llm import _research_with_tools
+
+    seen = []
+
+    def step(messages, tools, tier, max_tokens):
+        if len(messages) == 1:
+            return {"content": [{"type": "tool_use", "id": "t1", "name": "web_search", "input": {"query": "cto marseille"}}], "stop_reason": "tool_use"}
+        if len(messages) == 3:
+            seen.append(messages[2]["content"][0]["content"])
+            return {"content": [{"type": "tool_use", "id": "t2", "name": "read_page", "input": {"url": "https://jobs.example.com/1"}}], "stop_reason": "tool_use"}
+        return {"content": [{"type": "text", "text": '[{"title": "CTO"}]'}], "stop_reason": "end_turn"}
+
+    out = _research_with_tools("find", "default", "searxng", "FR", step=step,
+                               search=lambda q: [{"title": "Offre", "url": "https://jobs.example.com/1", "snippet": q}],
+                               read=lambda u: "Texte de l'annonce")
+    assert out == '[{"title": "CTO"}]' and "cto marseille" in seen[0]

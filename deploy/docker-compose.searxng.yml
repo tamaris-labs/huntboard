@@ -1,0 +1,31 @@
+# Huntboard + SearXNG (moteur de recherche auto-hébergé, sans clé) à partir de l'image publiée.
+# Usage : placer ce fichier, searxng/settings.yml et un .env dans un dossier, puis
+#   docker compose -f docker-compose.searxng.yml up -d
+# Dans le .env : WEB_SEARCH=searxng et SEARXNG_URL=http://searxng:8080 (voir docs/moteurs-ia.md).
+services:
+  huntboard:
+    image: ghcr.io/tamaris-labs/huntboard:latest
+    container_name: huntboard
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${HUNTBOARD_PORT:-8000}:8000"
+    volumes:
+      - huntboard-data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # accès à Ollama ou LM Studio sur la machine hôte
+    depends_on:
+      - searxng
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: huntboard-searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://searxng:8080/
+    # Aucun port publié : SearXNG n'est joignable que par Huntboard, sur le réseau interne.
+
+volumes:
+  huntboard-data:

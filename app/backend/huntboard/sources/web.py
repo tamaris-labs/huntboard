@@ -1,9 +1,10 @@
 """Collecte d'offres sur le web.
 
-- Avec le fournisseur ``anthropic`` : Claude mène la recherche (outil web_search)
-  en suivant la liste de sources et les consignes de la configuration.
-- Avec un autre fournisseur : les pages publiques listées dans les sources sont
-  téléchargées et le modèle en extrait les offres (couverture plus limitée).
+- Quand une recherche web est disponible (recherche intégrée du fournisseur, ou service externe
+  Brave, Tavily ou SearXNG : voir ``settings.web_search``), le modèle mène la recherche en suivant
+  la liste de sources et les consignes de la configuration.
+- Sinon, les pages publiques listées dans les sources sont téléchargées et le modèle en extrait
+  les offres (couverture plus limitée).
 """
 
 from __future__ import annotations
@@ -41,7 +42,9 @@ def _sources(config: dict[str, Any]) -> str:
 
 
 def search(config: dict[str, Any], known_urls: list[str], max_jobs: int = 25, max_partners: int = 5) -> list[dict[str, Any]]:
-    if settings.llm_provider == "anthropic":
+    from ..settings import web_search_backend
+
+    if web_search_backend(settings) != "none":
         return _search_claude(config, known_urls, max_jobs, max_partners)
     return _search_fetch(config, max_jobs)
 
@@ -62,11 +65,11 @@ Ignore les offres déjà connues dont l'url figure ici : {', '.join(known_urls[-
 Rapporte au plus {max_jobs} offres d'emploi et {max_partners} recherches d'associés, au format :
 {OFFER_SHAPE}"""
     try:
-        data = llm.web_research_json(prompt, tier="default")
+        data = llm.web_research_json(prompt, tier="default", country=config.get("country") or "FR")
         return data if isinstance(data, list) else []
     except Exception as e:  # noqa: BLE001
-        log.warning("Recherche web impossible : %s", e)
-        return []
+        log.warning("Recherche web impossible, repli sur la lecture des sources : %s", e)
+        return _search_fetch(config, max_jobs)
 
 
 def _search_fetch(config: dict[str, Any], max_jobs: int) -> list[dict[str, Any]]:

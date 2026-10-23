@@ -1,0 +1,13 @@
+# Réglages minimaux de SearXNG pour Huntboard (https://docs.searxng.org).
+use_default_settings: true
+server:
+  # Remplacez par une valeur aléatoire, par exemple : openssl rand -hex 32
+  secret_key: "remplacez-moi"
+  limiter: false
+  image_proxy: false
+search:
+  safe_search: 0
+  # Le format json est indispensable : Huntboard interroge SearXNG en JSON.
+  formats:
+    - html
+    - json

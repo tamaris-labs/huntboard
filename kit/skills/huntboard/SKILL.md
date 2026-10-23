@@ -12,12 +12,14 @@ Speak to the person in their language (French or English).
 Skill files:
 - `template/huntboard.html` — the page, published as is (bilingual FR/EN, built-in setup assistant);
 - `config.example.json` — blank configuration (structure, default weights and sources);
-- `prompts/veille.md` — template of the daily scheduled task.
+- `prompts/veille.md` — template of the daily scheduled task;
+- `prompts/sources.md` — template of the on-demand task that checks and extends sources on the web.
 
 ## 1. Publish the page
 
 1. Read `template/huntboard.html` and publish it with the Artifact tool: title « Huntboard »,
-   icon `radar`, capabilities `{"db": {}, "sample": {}, "downloads": {}, "assets": {}}`. Do not edit the page.
+   icon `radar`, capabilities `{"db": {}, "sample": {}, "downloads": {}, "assets": {}}` (step 2 bis
+   adds `mcp`). Do not edit the page.
 2. Upload the basemap for the geographic map: Artifact publish with the new page's `url`,
    `file_path` = `assets/basemap.json`, `asset: true`; then ArtifactData `set` collection `geo`,
    doc_id `basemap`, data `{"url": "/_blob/<asset id>", "asset_id": "<asset id>"}`. Without it the
@@ -45,9 +47,23 @@ only from what the person provided.
    (estimate commute times from home to the main employment hubs of the zone). Remove steps 4
    and 5 if no mail connector is available, and say that connecting the mailbox later enables
    reading LinkedIn, Indeed and HelloWork alerts.
-2. Create the scheduled task with that text, at the time the person chooses (default 8:30 on
-   weekdays, in their time zone), with mobile notification on.
+2. Create the scheduled task with that text, at the time the person chooses (default 8:30 every
+   day, in their time zone), with mobile notification on.
 3. Offer to run a first pass right away.
+
+## 2 bis. Enable source checking on the web (recommended)
+
+The page cannot reach the web (artifact sandbox), so its *Check and extend on the web* button
+fires a scheduled task through the « Claude Code Remote » connector.
+1. Read `prompts/sources.md`, replace `{{ARTIFACT_URL}}`, and create a scheduled task named
+   « Huntboard – sources » with that text and **no schedule** (it only runs when fired), with
+   mobile notification on.
+2. `update` `config/main` with `source_task_id` = the new task id (`trig_…`).
+3. Republish the page to the same URL with capabilities
+   `{"db": {}, "sample": {}, "downloads": {}, "assets": {}, "mcp": {"servers": [{"server": "Claude Code Remote", "tools": ["fire_trigger"]}]}}`.
+   The first click asks the person to allow the connector for the page.
+Without this step the button stays hidden; AI suggestions (from the model's knowledge) and the
+Monday suggestions of the watch still work.
 
 ## 3. Wrap up
 

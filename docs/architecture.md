@@ -21,7 +21,7 @@ flowchart LR
 | Adaptateur | `app/frontend/shim.js` | Fournit `window.claude.use("db" \| "sample")` au-dessus de l'API, pour réutiliser la page de l'artifact |
 | API | `app/backend/huntboard/main.py` | Documents (`/api/db`), modèle (`/api/llm/sample`), veille (`/api/veille/*`), authentification simple |
 | Stockage | `app/backend/huntboard/store.py` | Collections de documents JSON versionnés dans SQLite |
-| Modèle | `app/backend/huntboard/llm.py` | Fournisseurs `anthropic` et `openai` (compatible), trois niveaux de modèle, JSON tolérant, recherche web |
+| Modèle | `app/backend/huntboard/llm.py` | Fournisseurs `anthropic` et `openai` (compatible), trois niveaux de modèle, JSON tolérant, recherche web intégrée au fournisseur ou par service externe (Brave, Tavily, SearXNG) — voir [moteurs-ia.md](moteurs-ia.md) |
 | Veille | `app/backend/huntboard/veille.py` | Apprentissage, lecture des alertes, recherche web, dédoublonnage, notation, écriture, notification |
 
 ## Déroulé d'un passage de veille

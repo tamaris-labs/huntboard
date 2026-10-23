@@ -8,9 +8,13 @@ the project without breaking it.
 A personal job-search board shipped two ways that share one interface:
 
 1. **Claude kit** (`kit/skills/huntboard/`): a skill that publishes the page as a claude.ai
-   artifact (capabilities `db`, `sample`, `downloads`, `assets`) and creates a daily scheduled task.
+   artifact (capabilities `db`, `sample`, `downloads`, `assets`, and `mcp` for the « Claude Code Remote » `fire_trigger` tool once source checking is enabled) and creates a daily scheduled task.
 2. **Self-hosted app** (`app/`): FastAPI + SQLite, watch scheduled by APScheduler, multi-provider
-   LLM layer, Docker Compose.
+   LLM layer, Docker Compose. Web search is pluggable (`settings.web_search`,
+   `settings.web_search_backend`, `llm.web_research_json`): provider-native (Anthropic, OpenAI and
+   xAI Responses, OpenRouter `:online`, Gemini grounding) or an external service (Brave, Tavily,
+   SearXNG) driven through a `web_search`/`read_page` tool loop that works with any tool-calling
+   model. See `docs/moteurs-ia.md`.
 
 ## Core principle: one page
 
@@ -73,11 +77,19 @@ output in the user's language (`outLang()`, `style()`). To add a language: add a
 | `geo` | `basemap` | url of the vector basemap (`/_blob/<id>` in the artifact, `/basemap.json` in the app) |
 | `geo` | `cache` | home{label, lat, lon, src = config.geo text}, places{normalised location: {label, lat, lon}} — filled by AI geocoding in the page |
 | `memos` | `m-…` | text, created_at, source (text/voice/assistant), offer_id, offer_label |
+| `sources` | `suggestions` | items[{name, url, note, why, target (main or track id), status unverified/ok/moved/blocked/unreachable/no_url/not_checked, title, checked_at, origin ai/web/watch, created_at}], weak[{name, why}], verify{state requested/running/done, requested_at, done_at, by app/task} — never applied to config without the user ticking them in Sources |
 | `documents` | `d-…` | name, filename, kind (cv/cv_tr/letter/other), lang, asset_id, size, content_type, created_at, text (extracted, ≤15k chars — used as style reference for letters), offer_id, offer_label |
 
 Business rules:
 - The watch **never** writes to `notes` except: create a "postule" note from an application
-  confirmation, and append a dated event to `events`.
+  acknowledgement, and append a dated event to `events`. Acknowledgements are recognised from any
+  sender (job boards, Workday, SmartRecruiters…: `veille.application_acks`); an unknown offer is
+  created with tier `pending`, and pending offers are scored at the next run (`score_pending`).
+- Source suggestions: the page suggests from the model's knowledge (`sxSuggest`); web checking is
+  `huntboardApp.verifySources` in the app (`veille.verify_and_suggest`, endpoint
+  `/api/app/sources/verify`) or, in the kit, `mcp.callTool("Claude Code Remote", "fire_trigger")`
+  on the on-demand task `config.source_task_id` (`kit/.../prompts/sources.md`). The Monday watch
+  adds one or two checked suggestions. Neither ever edits `config.sources`.
 - `non_retenu` (recruiter's refusal) is **not** a preference signal for learning.
 - Co-founder searches are the extra track `associes` (legacy `config.partners` and `kind: "associe"` are
   migrated by the page on load; `effTrack()` maps old offers).

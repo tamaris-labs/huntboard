@@ -24,9 +24,10 @@ reste qu'un suivi manuel des candidatures.**
 - **Kit Claude** : un compte Claude dont l'offre permet les artefacts et les tâches planifiées.
   La page utilise votre usage Claude ; l'autorisation est demandée une fois. Le connecteur
   Gmail, facultatif, permet de lire vos alertes e-mail (LinkedIn, Indeed, HelloWork…).
-- **Application autonome** : une clé d'API Anthropic (recommandé : seul fournisseur avec la
-  recherche web intégrée) ou d'une API compatible OpenAI (OpenAI, Gemini, Mistral, Ollama en
-  local, sans recherche web).
+- **Application autonome** : une clé d'API Anthropic (recommandé) ou d'une API compatible
+  OpenAI (OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter), ou un modèle local (Ollama,
+  LM Studio). La recherche web vient du fournisseur quand il en dispose, ou d'un service externe
+  (Brave, Tavily, SearXNG auto-hébergé) : voir [moteurs-ia.md](moteurs-ia.md).
 
 Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 
@@ -91,6 +92,8 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 - **Jauge de complétude** du paramétrage, avec les éléments manquants et une évaluation de sa
   cohérence par l'IA.
 - Adresse du domicile privée, plaçable précisément sur la carte.
+- **Suggestions de sources** adaptées au profil et au rendement des sources actuelles,
+  vérifiées sur le web ; une ou deux nouvelles chaque lundi.
 
 <br clear="right">
 

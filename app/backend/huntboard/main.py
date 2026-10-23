@@ -25,7 +25,7 @@ log = logging.getLogger("huntboard")
 HERE = Path(__file__).resolve().parent
 FRONTEND = HERE.parent.parent / "frontend"
 KIT = HERE.parent.parent.parent / "kit" / "skills" / "huntboard"
-COLLECTIONS = {"offers", "notes", "prep", "config", "profile", "coach", "documents", "geo", "postings", "memos"}
+COLLECTIONS = {"offers", "notes", "prep", "config", "profile", "coach", "documents", "geo", "postings", "memos", "sources"}
 ASSET_TYPES = {"application/pdf", "text/plain", "text/markdown", "text/csv", "application/json", "image/png", "image/jpeg", "image/webp"}
 ASSET_MAX = 15 * 1024 * 1024
 
@@ -151,6 +151,14 @@ def app_imap_test() -> dict[str, Any]:
         return {"ok": True, "recent": len(heads), "alerts": alerts}
     except Exception as e:  # noqa: BLE001
         return {"ok": False, "error": str(e)[:300]}
+
+
+@app.post("/api/app/sources/verify")
+def app_sources_verify(body: dict[str, Any]) -> dict[str, Any]:
+    """Vérifie les sources suggérées (adresse joignable, redirection) et, si « more », en cherche d'autres sur le web."""
+    items = body.get("items")
+    more = max(0, min(int(body.get("more") or 0), 10))
+    return veille.verify_and_suggest(store, items=items if isinstance(items, list) else None, more=more)
 
 
 @app.post("/api/app/llm/test")

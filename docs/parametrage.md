@@ -20,7 +20,7 @@ Pas à pas : [tutoriel.md](tutoriel.md).
 | Documents et lettres | Fichiers originaux conservés et téléchargeables (CV en PDF, CV traduits, lettres de motivation) ; rédaction d'une lettre de motivation à partir d'une annonce suivie ou d'un texte collé, du CV et du profil, en sept langues et trois longueurs, en s'inspirant des lettres déjà enregistrées ; texte modifiable puis enregistré, copié ou téléchargé |
 | Pistes complémentaires | Recherches séparées du fil principal (missions freelance, international et organisations internationales, piste libre) : critères, rémunération attendue (TJM par exemple), sources, fréquence quotidienne ou hebdomadaire, plafond par passage ; par défaut elles restent dans un filtre dédié, sans notification ni effet sur l'apprentissage |
 | Critères | Rémunération plancher, archivage, adresse du domicile (privée, plaçable sur la carte), domicile et règles de trajet et de télétravail, postes, domaines, contrats, exclusions, pondération, recherche d'associés, consignes libres ; bouton « Compléter avec l'IA à partir du CV » |
-| Sources | Ajout en un clic des sources recommandées pour un pays, activation, ajout de sources personnalisées avec consigne de lecture |
+| Sources | Ajout en un clic des sources recommandées pour un pays, activation, ajout de sources personnalisées avec consigne de lecture, rendement de chaque source (offres trouvées et suivies), **suggestions de sources par l'IA** et vérification sur le web (voir ci-dessous) |
 | Apprentissage | Tendances tirées de vos choix, avec leur effet et leur justification ; chacune est révocable |
 | Langue et données | Langue de l'interface et des textes générés, pays principal, export et import JSON, relance de l'assistant |
 
@@ -34,6 +34,30 @@ jamais d'elles-mêmes : elles s'affichent champ par champ, à cocher puis à app
 - **Sources** : la consigne de chaque source guide la veille (« lecture directe refusée,
   passer par la recherche web », « filtrer par région avec ?locations=… »). Voir
   [sources.md](sources.md) pour la liste par pays.
+
+## Suggestions de sources
+
+Dans Recherche › Sources :
+
+1. **Suggérer des sources avec l'IA** : l'IA reçoit le CV, les critères, la zone et le
+   rendement de chaque source active, puis propose jusqu'à huit sources nouvelles (sites
+   spécialisés, réseaux et pôles régionaux, cabinets, pages carrières, programmes publics,
+   services de mise en relation entre associés), chacune avec une phrase « pourquoi pour vous »
+   et sa destination (recherche principale ou piste). Elle signale aussi les **sources peu
+   productives**, à désactiver d'une case.
+2. **Vérifier et compléter sur le web** : teste les adresses proposées (vérifiée, adresse mise à
+   jour, site fermé aux robots, inaccessible) et cherche quelques sources supplémentaires.
+3. Cochez les sources à garder puis **Ajouter la sélection** ; *Écarter* retire une proposition.
+4. **Chaque lundi**, la veille propose une ou deux sources nouvelles, vérifiées, qui s'ajoutent
+   à la même liste et sont citées dans la notification.
+
+Rien n'est ajouté ni désactivé sans votre choix. Le fonctionnement diffère selon la distribution :
+
+| | Kit Claude | Application autonome |
+|---|---|---|
+| Suggestions IA | Usage Claude du compte, d'après les connaissances du modèle : la page n'a pas accès au web (environnement isolé), les adresses sont donc marquées « à vérifier » | Moteur d'IA configuré ; les suggestions du bouton web s'appuient sur la recherche web configurée ([moteurs-ia.md](moteurs-ia.md)) |
+| Vérification sur le web | Tâche planifiée « Huntboard – sources », sans horaire, déclenchée par le bouton via le connecteur « Claude Code Remote » ; résultats en quelques minutes, avec notification. À activer une fois en demandant à Claude « Active la vérification des sources de mon Huntboard » ; le premier clic demande d'autoriser le connecteur pour la page | Serveur de l'application : lecture des pages et recherche web (intégrée au fournisseur, ou Brave, Tavily, SearXNG), résultat en quelques secondes |
+| Proposition du lundi | Étape 10 ter de la tâche de veille | Intégrée au passage du lundi |
 - **Alertes e-mail** : créez des alertes précises (intitulé + lieu ou télétravail) sur LinkedIn,
   Indeed, HelloWork ; elles sont lues par e-mail, sans jamais accéder à vos comptes.
 - **Suivi** : renseignez la prochaine action et son échéance dans la fiche d'offre ; le tableau
