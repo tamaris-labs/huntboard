@@ -60,6 +60,30 @@ def _body(msg: email.message.Message) -> str:
     return re.sub(r"[͏­‌\s]+", " ", text).strip()
 
 
+def fetch_headers(days: int = 2, limit: int = 400) -> list[Mail]:
+    """En-têtes (expéditeur, objet, date) des e-mails récents, sans le corps ni marquage comme lu."""
+    if not settings.imap_enabled:
+        return []
+    since = (datetime.now() - timedelta(days=days)).strftime("%d-%b-%Y")
+    out: list[Mail] = []
+    with imaplib.IMAP4_SSL(settings.imap_host, settings.imap_port) as box:
+        box.login(settings.imap_user, settings.imap_password)
+        box.select(settings.imap_folder, readonly=True)
+        typ, data = box.search(None, "SINCE", since)
+        ids = data[0].split() if typ == "OK" and data and data[0] else []
+        for mid in ids[-limit:]:
+            typ, d = box.fetch(mid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])")
+            if typ != "OK" or not d or not isinstance(d[0], tuple):
+                continue
+            msg = email.message_from_bytes(d[0][1])
+            try:
+                date = parsedate_to_datetime(msg.get("Date")).isoformat()
+            except Exception:  # noqa: BLE001
+                date = ""
+            out.append(Mail(_decode(msg.get("From")), _decode(msg.get("Subject")), date, ""))
+    return out
+
+
 def fetch_alerts(days: int = 2, senders: list[str] | None = None, limit: int = 60) -> list[Mail]:
     if not settings.imap_enabled:
         return []

@@ -184,3 +184,27 @@ def test_settings_overrides(tmp_path):
     assert s2.llm_api_key == "sk-test-123456789" and s2.imap_port == 1993
     s2.save_overrides({"llm_api_key": None})
     assert not s2.llm_enabled
+
+
+def test_follow_up_events():
+    from types import SimpleNamespace as M
+
+    from huntboard.veille import follow_up_events
+
+    offers = {"a": {"company": "Aurora Énergie"}, "b": {"company": "Nordline Robotics"}, "c": {"company": "Zeta"}}
+    notes = {
+        "a": {"status": "postule", "events": []},
+        "b": {"status": "entretien", "contacts": [{"email": "camille@nordline.example.com"}], "events": [{"text": "E-mail reçu de Camille : Planning"}]},
+        "c": {"status": "ecartee"},
+    }
+    mails = [
+        M(sender="RH Aurora Énergie <rh@aurora.example.com>", subject="Votre candidature", date="2026-10-22T09:00:00"),
+        M(sender="Camille <camille@nordline.example.com>", subject="Planning", date="2026-10-22T10:00:00"),
+        M(sender="Paul <paul@nordline.example.com>", subject="Étude de cas", date="2026-10-22T11:00:00"),
+        M(sender="jobalerts-noreply@linkedin.com", subject="Aurora Énergie recrute", date="2026-10-22T12:00:00"),
+        M(sender="Zeta <hello@zeta.example.com>", subject="Hello", date="2026-10-22T12:00:00"),
+    ]
+    ev = follow_up_events(mails, offers, notes, ["linkedin.com"])
+    assert [e["text"] for e in ev["a"]] == ["E-mail reçu de RH Aurora Énergie : Votre candidature"]
+    assert [e["text"] for e in ev["b"]] == ["E-mail reçu de Paul : Étude de cas"]  # « Planning » déjà connu ; domaine du contact reconnu
+    assert "c" not in ev

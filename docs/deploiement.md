@@ -66,6 +66,26 @@ L'interface est disponible sur `http://<serveur>:8000` (identifiant libre, mot d
 
 ## Lecture des alertes e-mail
 
+Toute messagerie compatible IMAP convient : Gmail, Yahoo, iCloud, Orange, Free, SFR, La Poste, OVH,
+GMX, Proton (avec Proton Mail Bridge)… Le plus simple est de la régler dans l'application
+(Réglages › Apprentissage et données › Connexions), qui propose le serveur de chaque fournisseur
+et le lien pour créer un **mot de passe d'application**. Outlook, Hotmail et Microsoft 365
+n'acceptent généralement plus de mot de passe pour IMAP : transférez vos alertes vers une autre
+boîte ou utilisez le kit Claude avec un connecteur Microsoft.
+
+L'accès est toujours en **lecture seule** (aucun message marqué comme lu, déplacé ou supprimé).
+Deux lectures sont faites à chaque passage :
+
+- **Alertes** : les e-mails des expéditeurs listés (LinkedIn, Indeed, HelloWork, Welcome to the
+  Jungle, APEC, Cadremploi, Michael Page par défaut ; liste modifiable dans Connexions ou avec
+  `ALERT_SENDERS`) sont analysés pour en extraire les offres.
+- **Suivi des candidatures** (désactivable : case dans Connexions ou `MAIL_FOLLOW_UPS=false`) : seuls
+  les en-têtes des e-mails récents sont lus ; un message dont l'expéditeur ou l'objet correspond
+  à l'entreprise ou à un contact d'une candidature en cours est ajouté à son historique
+  (« E-mail reçu de … : objet »).
+
+### Réglage par le fichier .env
+
 1. Créez vos alertes sur LinkedIn (Emplois > Alertes, envoi par e-mail, fréquence
    quotidienne), HelloWork, Michael Page…
 2. Gmail : activez la validation en deux étapes, créez un **mot de passe d'application**

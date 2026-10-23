@@ -139,6 +139,20 @@ def app_settings(patch: dict[str, Any]) -> dict[str, Any]:
     return app_status()
 
 
+@app.post("/api/app/imap/test")
+def app_imap_test() -> dict[str, Any]:
+    """Connexion en lecture seule et décompte des alertes des 7 derniers jours (aucun message modifié)."""
+    if not settings.imap_enabled:
+        return {"ok": False, "error": "Messagerie non configurée."}
+    from .sources import email_imap
+    try:
+        heads = email_imap.fetch_headers(days=7, limit=500)
+        alerts = sum(1 for m in heads if any(s.lower() in (m.sender or "").lower() for s in settings.alert_senders))
+        return {"ok": True, "recent": len(heads), "alerts": alerts}
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "error": str(e)[:300]}
+
+
 @app.post("/api/app/llm/test")
 def app_llm_test() -> dict[str, Any]:
     if not settings.llm_enabled:

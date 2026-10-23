@@ -42,9 +42,12 @@ class Settings:
     alert_senders: list[str] = field(
         default_factory=lambda: _list(
             "ALERT_SENDERS",
-            "jobalerts-noreply@linkedin.com,jobs-noreply@linkedin.com,emails.hellowork.com,michaelpage",
+            "jobalerts-noreply@linkedin.com,jobs-noreply@linkedin.com,indeed,hellowork,welcometothejungle,apec,cadremploi,michaelpage",
         )
     )
+
+    # Suivi des candidatures : e-mails des entreprises et contacts suivis (en-têtes seulement)
+    follow_ups: bool = field(default_factory=lambda: _env("MAIL_FOLLOW_UPS", "true").lower() == "true")
 
     # Notification (ntfy, Gotify, webhook générique recevant du texte)
     notify_url: str = field(default_factory=lambda: _env("NOTIFY_URL"))
@@ -92,6 +95,8 @@ class Settings:
             v = "" if v is None else v
             if k == "imap_port":
                 v = int(v or 993)
+            elif k == "alert_senders":
+                v = [x.strip() for x in (v if isinstance(v, list) else str(v).replace("\n", ",").split(",")) if x.strip()]
             elif isinstance(v, str):
                 v = v.strip()
             data[k] = v
@@ -112,14 +117,16 @@ class Settings:
                     "key_set": bool(self.llm_api_key), "key_hint": hint(self.llm_api_key),
                     "model_quick": self.model_quick, "model_default": self.model_default, "model_complex": self.model_complex},
             "imap": {"enabled": self.imap_enabled, "host": self.imap_host, "port": self.imap_port, "user": self.imap_user,
-                     "folder": self.imap_folder, "password_set": bool(self.imap_password)},
+                     "folder": self.imap_folder, "password_set": bool(self.imap_password),
+                     "alert_senders": self.alert_senders, "follow_ups": self.follow_ups},
             "notify": {"enabled": bool(self.notify_url), "url_set": bool(self.notify_url)},
             "veille": {"enabled": self.veille_enabled, "cron": self.veille_cron, "timezone": self.timezone},
         }
 
 
 EDITABLE = {"llm_provider", "llm_api_key", "llm_base_url", "model_quick", "model_default", "model_complex",
-            "imap_host", "imap_port", "imap_user", "imap_password", "imap_folder", "notify_url"}
+            "imap_host", "imap_port", "imap_user", "imap_password", "imap_folder", "notify_url",
+            "alert_senders", "follow_ups"}
 SECRETS = {"llm_api_key", "imap_password", "notify_url"}
 
 settings = Settings()

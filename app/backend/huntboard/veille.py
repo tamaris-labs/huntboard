@@ -112,6 +112,37 @@ def offers_from_mail(days: int) -> tuple[list[dict[str, Any]], list[str]]:
     return candidates, events
 
 
+def follow_up_events(mails: list[Any], offers: dict[str, dict], notes: dict[str, dict],
+                     senders_to_skip: list[str]) -> dict[str, list[dict[str, str]]]:
+    """Associe les e-mails récents aux candidatures suivies (adresse d'un contact, domaine ou nom de
+    l'entreprise dans l'expéditeur ou l'objet). Renvoie {offer_id: [événements nouveaux]}."""
+    out: dict[str, list[dict[str, str]]] = {}
+    skip = [s.lower() for s in senders_to_skip]
+    for oid, n in notes.items():
+        if n.get("status") not in POSITIVE:
+            continue
+        o = offers.get(oid) or {}
+        company = (o.get("company") or "").strip().lower()
+        keys = {c.get("email", "").strip().lower() for c in n.get("contacts", []) if c.get("email")}
+        domains = {k.split("@", 1)[1] for k in keys if "@" in k and not k.endswith(("gmail.com", "outlook.com", "hotmail.com", "yahoo.fr", "yahoo.com"))}
+        known = {e.get("text", "") for e in n.get("events", [])}
+        for m in mails:
+            sender, subject = (m.sender or "").lower(), (m.subject or "")
+            if any(s in sender for s in skip):
+                continue
+            hit = any(k in sender for k in keys) or any(d in sender for d in domains) or (
+                len(company) >= 4 and (company in sender or company in subject.lower()))
+            if not hit:
+                continue
+            who = re.sub(r"\s*<.*>", "", m.sender or "").strip() or m.sender
+            text = f"E-mail reçu de {who} : {subject}"[:300]
+            if text in known:
+                continue
+            known.add(text)
+            out.setdefault(oid, []).append({"at": m.date or now_iso(), "text": text})
+    return out
+
+
 # 3. Notation ------------------------------------------------------------------
 def _style(config: dict[str, Any]) -> str:
     if config.get("lang") == "en":
@@ -309,6 +340,16 @@ def run(store: Store, mail_days: int | None = None) -> str:
             o.update({"id": oid, "found_at": stamp, "kind": o.get("kind") or "emploi"})
             store.set("offers", oid, o)
 
+        if settings.follow_ups and settings.imap_enabled:
+            try:
+                fresh_events = follow_up_events(email_imap.fetch_headers(days), offers, notes, settings.alert_senders)
+                for oid, evs in fresh_events.items():
+                    n = store.data("notes", oid) or {}
+                    store.update("notes", oid, {"events": (n.get("events") or []) + evs})
+                    co = (offers.get(oid) or {}).get("company") or oid
+                    events.extend(f"{co} — {e['text']}" for e in evs)
+            except Exception as e:  # noqa: BLE001
+                log.warning("Suivi des e-mails impossible : %s", e)
         kept = keep_postings(store, offers, notes)
         summary = _summary(jobs, partners, events) if (jobs or partners or events or extra) else empty_message(config, notes)
         if kept:

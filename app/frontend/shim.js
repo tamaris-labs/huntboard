@@ -214,6 +214,7 @@
     status: () => fetch("/api/app/status", { credentials: "same-origin" }).then(j),
     saveSettings: (patch) => fetch("/api/app/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch), credentials: "same-origin" }).then(j),
     testLlm: () => fetch("/api/app/llm/test", { method: "POST", credentials: "same-origin" }).then(j),
+    testMail: () => fetch("/api/app/imap/test", { method: "POST", credentials: "same-origin" }).then(j),
     runWatch: () => fetch("/api/veille/run", { method: "POST", credentials: "same-origin" }),
   };
   window.claude = { use: async (name) => caps[name] || null };

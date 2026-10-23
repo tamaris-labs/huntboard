@@ -37,7 +37,8 @@ Setup guide (`openGuide()`, `guideSteps()`): checklist overlay from the header b
 onboarding; banners for demo data (`config.demo`) and missing AI. Reset (`#rs-go`) deletes every
 collection except `geo/basemap` and restarts onboarding. App-only features use
 `window.huntboardApp` (set by `shim.js`): status, `saveSettings` (AI, IMAP, notify →
-`<data>/settings.json`, overrides `.env`, secrets write-only), `testLlm`, `runWatch`.
+`<data>/settings.json`, overrides `.env`, secrets write-only), `testLlm`, `testMail`, `runWatch`. The app also follows recruiter e-mails from headers only
+(`veille.follow_up_events`: contact address, contact domain or company name → dated event).
 
 Published repository: `tamaris-labs/huntboard` (project at the root). CI: `.github/workflows/ci.yml`;
 release on tag `v*`: `.github/workflows/release.yml` (Docker image `ghcr.io/tamaris-labs/huntboard`,
