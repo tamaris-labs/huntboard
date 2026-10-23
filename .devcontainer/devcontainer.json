@@ -1,0 +1,13 @@
+{
+  "name": "Huntboard (démonstration)",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "pip install -r app/backend/requirements.txt pytest && HUNTBOARD_DATA_DIR=/workspaces/huntboard-demo python scripts/demo_data.py",
+  "postStartCommand": "bash -c 'cd app/backend && HUNTBOARD_DATA_DIR=/workspaces/huntboard-demo nohup python -m uvicorn huntboard.main:app --host 0.0.0.0 --port 8000 > /tmp/huntboard.log 2>&1 &'",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "Huntboard", "onAutoForward": "openBrowser" }
+  }
+}

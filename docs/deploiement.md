@@ -29,6 +29,16 @@ page *Packages* du dépôt ou *Releases*.
 Mise à jour : `docker compose pull && docker compose up -d` (les données restent dans le volume
 `huntboard-data`).
 
+## Essai dans un Codespace GitHub (navigateur, téléphone compris)
+
+Sur la page du dépôt : **Code › Codespaces › Create codespace on main**. L'environnement installe
+l'application, la remplit de données fictives et l'ouvre sur le port 8000 (onglet *Ports* ›
+*Open in Browser* si elle ne s'ouvre pas seule). Sans clé d'IA, l'interface est entièrement
+consultable mais la veille et l'assistant ne répondent pas ; pour les activer, ajoutez un secret
+Codespaces `LLM_API_KEY`. L'image publiée peut aussi y être testée :
+`docker run --rm -p 8001:8000 ghcr.io/tamaris-labs/huntboard:latest`. Arrêtez le Codespace après
+usage pour préserver le quota gratuit.
+
 ## Installation depuis le code source
 
 ```bash
