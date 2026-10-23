@@ -1,15 +1,22 @@
 {
   "name": "Huntboard (démonstration)",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false
+    }
   },
   "postCreateCommand": "pip install -r app/backend/requirements.txt pytest && HUNTBOARD_DATA_DIR=/workspaces/huntboard-demo python scripts/demo_data.py",
   "postAttachCommand": {
     "huntboard": "bash scripts/codespace_start.sh"
   },
-  "forwardPorts": [8000],
+  "forwardPorts": [
+    8000
+  ],
   "portsAttributes": {
-    "8000": { "label": "Huntboard", "onAutoForward": "openBrowser" }
+    "8000": {
+      "label": "Huntboard",
+      "onAutoForward": "openBrowser"
+    }
   }
 }
