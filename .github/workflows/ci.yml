@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r app/backend/requirements.txt pytest
+      - name: Tests
+        working-directory: app/backend
+        run: python -m pytest -q
+      - name: Page and shim syntax
+        run: |
+          python -c "import re;s=open('kit/skills/huntboard/template/huntboard.html',encoding='utf-8').read();open('/tmp/hb.js','w').write(re.findall(r'<script>(.*?)</script>',s,re.S)[-1])"
+          node --check /tmp/hb.js
+          node --check app/frontend/shim.js
+      - name: Personal data check (e-mails, phone numbers)
+        run: python scripts/check_personal_data.py

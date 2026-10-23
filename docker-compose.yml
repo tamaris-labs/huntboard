@@ -1,0 +1,16 @@
+services:
+  huntboard:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    image: huntboard:latest
+    container_name: huntboard
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${HUNTBOARD_PORT:-8000}:8000"
+    volumes:
+      - huntboard-data:/data
+
+volumes:
+  huntboard-data:

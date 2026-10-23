@@ -1,0 +1,65 @@
+{
+  "lang": "fr",
+  "country": "FR",
+  "onboarded": false,
+  "archive_days": 30,
+  "salary_min_k": null,
+  "geo": "",
+  "roles": "",
+  "domains": "",
+  "contracts": "CDI de préférence. ESN et conseil acceptés. Freelance à étudier au cas par cas.",
+  "exclusions": "Stages, alternances, postes juniors. Rémunération affichée sous le plancher.",
+  "weights": "Score sur 100 : géographie et télétravail 30, intérêt technique 30, séniorité et relation client ou utilisateur 15, rémunération 15, stabilité du contrat 10.\nCorrespond : 70 et plus, sans point bloquant.\nPourrait correspondre : 50 à 69, ou bon score avec un point bloquant négociable (nommé).\nPlus éloignée : 3 offres au maximum par passage, choisies pour leur originalité.",
+  "partners": "",
+  "profile": "",
+  "free": "Salaire non affiché : ne pas pénaliser fortement, le signaler. Annonce de plus de 6 semaines : le signaler.",
+  "sources": [
+    {
+      "name": "Welcome to the Jungle",
+      "url": "https://www.welcometothejungle.com/fr/jobs",
+      "note": "Pages de recherche peu lisibles directement : chercher sur le domaine welcometothejungle.com puis lire les fiches d'offre.",
+      "active": true
+    },
+    {
+      "name": "HelloWork",
+      "url": "https://www.hellowork.com/fr-fr/emploi/recherche.html",
+      "note": "Chercher sur hellowork.com puis lire les fiches d'offre.",
+      "active": true
+    },
+    {
+      "name": "APEC",
+      "url": "https://www.apec.fr/candidat/recherche-emploi.html",
+      "note": "Mal indexée : chercher sur apec.fr avec intitulé et ville.",
+      "active": true
+    },
+    {
+      "name": "Cadremploi",
+      "url": "https://www.cadremploi.fr/emploi/liste_offres",
+      "active": true
+    },
+    {
+      "name": "France Travail",
+      "url": "https://candidat.francetravail.fr/offres/recherche",
+      "note": "Vérifier la date d'actualisation ; écarter les annonces de plus de 6 semaines.",
+      "active": true
+    },
+    {
+      "name": "Free-Work",
+      "url": "https://www.free-work.com/fr/tech-it/jobs",
+      "note": "Lecture directe possible avec ?query=<mot-clé>&locations=<région>.",
+      "active": true
+    },
+    {
+      "name": "Intelligence Academy (job board IA)",
+      "url": "https://www.the-intelligence-academy.com/job-board",
+      "note": "Agrégateur d'offres IA ; remonter à l'annonce d'origine pour l'url.",
+      "active": true
+    },
+    {
+      "name": "Indeed",
+      "url": "https://fr.indeed.com",
+      "note": "Lecture souvent refusée.",
+      "active": false
+    }
+  ]
+}

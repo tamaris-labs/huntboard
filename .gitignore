@@ -1,0 +1,16 @@
+# Secrets et données personnelles
+.env
+data/
+*.sqlite3
+.personal-data-denylist
+exports/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Divers
+.DS_Store
+*.zip
