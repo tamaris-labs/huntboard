@@ -99,7 +99,8 @@ docs/  scripts/check_personal_data.py
 ```bash
 cd app/backend && pip install -r requirements.txt pytest && python -m pytest -q
 HUNTBOARD_DATA_DIR=./data uvicorn huntboard.main:app --reload   # from app/backend
-docker compose up -d --build                                     # from the repo root
+docker compose up -d --build                                     # from the repo root (source)
+# deploy/docker-compose.yml: same service from the published image ghcr.io/tamaris-labs/huntboard
 python scripts/check_personal_data.py --history                  # before every publication
 ```
 

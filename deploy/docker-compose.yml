@@ -1,0 +1,17 @@
+# Huntboard à partir de l'image publiée (aucune compilation, aucun clonage du dépôt).
+# Usage : placer ce fichier et un .env (copie de .env.example) dans un dossier, puis
+#   docker compose up -d
+# Pour figer une version, remplacez « latest » par un numéro (ex. 2.2.0).
+services:
+  huntboard:
+    image: ghcr.io/tamaris-labs/huntboard:latest
+    container_name: huntboard
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${HUNTBOARD_PORT:-8000}:8000"
+    volumes:
+      - huntboard-data:/data
+
+volumes:
+  huntboard-data:

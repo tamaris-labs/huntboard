@@ -19,8 +19,10 @@ publie votre page, prépare la carte et planifie la veille du matin.
 **Application autonome** — sur un serveur avec Docker :
 
 ```bash
-git clone https://github.com/tamaris-labs/huntboard.git && cd huntboard
-cp .env.example .env        # LLM_API_KEY et APP_PASSWORD au minimum
+mkdir huntboard && cd huntboard
+curl -fsSLO https://raw.githubusercontent.com/tamaris-labs/huntboard/main/deploy/docker-compose.yml
+curl -fsSL -o .env https://raw.githubusercontent.com/tamaris-labs/huntboard/main/.env.example
+nano .env                   # LLM_API_KEY et APP_PASSWORD au minimum
 docker compose up -d
 ```
 

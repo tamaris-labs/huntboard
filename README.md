@@ -66,14 +66,20 @@ Both share **the same page** (`kit/skills/huntboard/template/huntboard.html`).
 
 ## Quick start — self-hosted
 
+With the published image (no clone, no build):
+
 ```bash
-git clone https://github.com/tamaris-labs/huntboard.git && cd huntboard
-cp .env.example .env      # set at least LLM_API_KEY and APP_PASSWORD
+mkdir huntboard && cd huntboard
+curl -fsSLO https://raw.githubusercontent.com/tamaris-labs/huntboard/main/deploy/docker-compose.yml
+curl -fsSL -o .env https://raw.githubusercontent.com/tamaris-labs/huntboard/main/.env.example   # then set at least LLM_API_KEY and APP_PASSWORD
 docker compose up -d
 ```
 
-Open `http://localhost:8000`; the setup assistant starts. Or pull the image published by the
-release workflow (`ghcr.io/tamaris-labs/huntboard`). Details: [docs/deploiement.md](docs/deploiement.md).
+Or from source: `git clone https://github.com/tamaris-labs/huntboard.git && cd huntboard`,
+`cp .env.example .env`, then `docker compose up -d --build`.
+
+Open `http://localhost:8000`; the setup assistant starts. Image: `ghcr.io/tamaris-labs/huntboard`
+(`latest`, or a version number). Details: [docs/deploiement.md](docs/deploiement.md).
 
 To try it with fictional data: `HUNTBOARD_DATA_DIR=./demo-data python scripts/demo_data.py`.
 

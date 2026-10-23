@@ -9,7 +9,27 @@
   - ou toute API **compatible OpenAI** : OpenAI, Gemini (point d'accès compatible), Mistral,
     ou un modèle local via **Ollama** (`LLM_BASE_URL=http://host.docker.internal:11434/v1`).
 
-## Installation
+## Installation rapide avec l'image publiée (recommandée)
+
+L'image est publique sur `ghcr.io/tamaris-labs/huntboard` : aucun compte GitHub, aucun clonage,
+aucune compilation.
+
+```bash
+mkdir huntboard && cd huntboard
+curl -fsSLO https://raw.githubusercontent.com/tamaris-labs/huntboard/main/deploy/docker-compose.yml
+curl -fsSL -o .env https://raw.githubusercontent.com/tamaris-labs/huntboard/main/.env.example
+nano .env                   # LLM_API_KEY, APP_PASSWORD, et si souhaité IMAP_* et NOTIFY_URL
+docker compose up -d
+```
+
+Versions disponibles : `latest` (dernière version stable), un numéro précis (`2.2.0`) pour figer
+l'installation, ou une préversion (`2.3.0-beta.2`), qui ne remplace jamais `latest`. Liste :
+page *Packages* du dépôt ou *Releases*.
+
+Mise à jour : `docker compose pull && docker compose up -d` (les données restent dans le volume
+`huntboard-data`).
+
+## Installation depuis le code source
 
 ```bash
 git clone https://github.com/tamaris-labs/huntboard.git
@@ -54,7 +74,8 @@ huntboard.mondomaine.fr {
 
 ```bash
 docker compose cp huntboard:/data/huntboard.sqlite3 ./sauvegarde-huntboard.sqlite3   # sauvegarde
-git pull && docker compose up -d --build                                  # mise à jour
+git pull && docker compose up -d --build                                  # mise à jour (code source)
+docker compose pull && docker compose up -d                              # mise à jour (image publiée)
 ```
 
 ## Coût indicatif
