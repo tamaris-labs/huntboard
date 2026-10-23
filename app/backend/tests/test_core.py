@@ -167,3 +167,20 @@ def test_step_endpoint_without_key():
     c = TestClient(app)
     r = c.post("/api/llm/step", json={"messages": [{"role": "user", "content": "x"}], "tools": []})
     assert r.status_code in (200, 503)
+
+
+def test_settings_overrides(tmp_path):
+    from huntboard.settings import Settings
+
+    s = Settings(data_dir=str(tmp_path), llm_api_key="", imap_password="pw-env")
+    s.save_overrides({"llm_api_key": "sk-test-123456789", "llm_provider": "anthropic", "imap_port": "1993", "unknown": "x"})
+    assert s.llm_enabled and s.imap_port == 1993
+    s.save_overrides({"llm_api_key": ""})  # secret vide : conservé
+    assert s.llm_api_key == "sk-test-123456789"
+    pub = s.public()
+    assert pub["llm"]["key_hint"] == "…6789" and "sk-test" not in str(pub)
+    s2 = Settings(data_dir=str(tmp_path), llm_api_key="")
+    s2.load_overrides()
+    assert s2.llm_api_key == "sk-test-123456789" and s2.imap_port == 1993
+    s2.save_overrides({"llm_api_key": None})
+    assert not s2.llm_enabled

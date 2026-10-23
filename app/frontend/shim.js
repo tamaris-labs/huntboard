@@ -206,6 +206,16 @@
 
   sample.limits = async () => ({ maxPromptBytes: 262144, tools: { maxCount: 24 } });
   const caps = { db, sample, downloads, assets };
+
+  // Fonctions propres à l'application autonome (absentes dans l'artefact Claude) : réglages des
+  // connexions (moteur d'IA, messagerie, notification), test du modèle, lancement de la veille.
+  const j = (r) => r.json();
+  window.huntboardApp = {
+    status: () => fetch("/api/app/status", { credentials: "same-origin" }).then(j),
+    saveSettings: (patch) => fetch("/api/app/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch), credentials: "same-origin" }).then(j),
+    testLlm: () => fetch("/api/app/llm/test", { method: "POST", credentials: "same-origin" }).then(j),
+    runWatch: () => fetch("/api/veille/run", { method: "POST", credentials: "same-origin" }),
+  };
   window.claude = { use: async (name) => caps[name] || null };
 
   // Commande propre à l'application : lancer la veille et afficher le dernier passage.

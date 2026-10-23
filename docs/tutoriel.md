@@ -28,6 +28,25 @@ docker compose up -d
 
 Ouvrez `http://<serveur>:8000`. Détails : [deploiement.md](deploiement.md).
 
+## Le guide intégré
+
+<img src="screenshots/tuto-00-guide.png" width="220" align="right" alt="Guide de démarrage">
+
+Le bouton **Guide**, en haut de l'écran, ouvre à tout moment la liste des étapes de paramétrage
+avec leur état (faite, à faire, à corriger) ; chaque étape ouvre directement le bon écran. Le
+guide s'affiche aussi automatiquement à la fin de l'assistant de démarrage.
+
+- **Données de démonstration** (Codespace, essais) : un bandeau le signale ; *Réinitialiser et
+  commencer* efface tout et relance l'assistant. La réinitialisation est aussi disponible dans
+  Réglages › Apprentissage et données › Réinitialiser (confirmation par le mot EFFACER).
+- **Moteur d'IA** (application autonome) : Réglages › Apprentissage et données › **Connexions** :
+  fournisseur, clé d'API, adresse (API compatible OpenAI) et modèles, avec un bouton *Tester*.
+  Ces réglages priment sur le fichier `.env` et ne sont jamais réaffichés. La même section règle
+  la messagerie (IMAP en lecture seule) et l'adresse de notification. Dans le kit Claude, l'IA
+  de votre compte est utilisée : rien à configurer.
+
+<br clear="right">
+
 ## 2. Suivre l'assistant de démarrage
 
 <p>

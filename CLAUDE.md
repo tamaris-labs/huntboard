@@ -33,6 +33,12 @@ Assistant (`asTools()`, `asRules()`): page functions passed to `sample(..., {too
 `shim.js` runs the tool loop against `/api/llm/step` (`llm.tool_step`, Anthropic or
 OpenAI-compatible). Without tool support the assistant falls back to a plain chat.
 
+Setup guide (`openGuide()`, `guideSteps()`): checklist overlay from the header button, opened after
+onboarding; banners for demo data (`config.demo`) and missing AI. Reset (`#rs-go`) deletes every
+collection except `geo/basemap` and restarts onboarding. App-only features use
+`window.huntboardApp` (set by `shim.js`): status, `saveSettings` (AI, IMAP, notify →
+`<data>/settings.json`, overrides `.env`, secrets write-only), `testLlm`, `runWatch`.
+
 Published repository: `tamaris-labs/huntboard` (project at the root). CI: `.github/workflows/ci.yml`;
 release on tag `v*`: `.github/workflows/release.yml` (Docker image `ghcr.io/tamaris-labs/huntboard`,
 `huntboard-skill.zip` attached to the GitHub release).

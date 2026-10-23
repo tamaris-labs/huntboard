@@ -126,6 +126,30 @@ def health() -> dict[str, Any]:
     return {"ok": True, "llm": settings.llm_enabled, "imap": settings.imap_enabled, "provider": settings.llm_provider}
 
 
+# Réglages de l'application (moteur d'IA, messagerie, notification) -------------
+@app.get("/api/app/status")
+def app_status() -> dict[str, Any]:
+    runs = store.runs(1)
+    return {"mode": "app", **settings.public(), "last_run": runs[0] if runs else None}
+
+
+@app.put("/api/app/settings")
+def app_settings(patch: dict[str, Any]) -> dict[str, Any]:
+    settings.save_overrides(patch)
+    return app_status()
+
+
+@app.post("/api/app/llm/test")
+def app_llm_test() -> dict[str, Any]:
+    if not settings.llm_enabled:
+        return {"ok": False, "error": "Aucune clé d'API configurée."}
+    try:
+        text = llm.complete("Reply with the single word OK.", tier="quick", max_tokens=10)
+        return {"ok": True, "text": text.strip()[:40], "model": settings.model_quick}
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "error": str(e)[:300]}
+
+
 @app.get("/api/db/{collection}")
 def list_docs(collection: str) -> list[dict[str, Any]]:
     _check(collection)

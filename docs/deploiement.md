@@ -39,6 +39,17 @@ Codespaces `LLM_API_KEY`. L'image publiée peut aussi y être testée :
 `docker run --rm -p 8001:8000 ghcr.io/tamaris-labs/huntboard:latest`. Arrêtez le Codespace après
 usage pour préserver le quota gratuit.
 
+## Réglages depuis l'interface
+
+Le moteur d'IA, la messagerie et l'adresse de notification se règlent aussi dans l'application :
+Réglages › Apprentissage et données › **Connexions** (bouton *Tester* pour le modèle). Ces
+valeurs sont enregistrées dans `settings.json`, dans le dossier de données (droits 600), et
+priment sur le `.env`. Les secrets ne sont jamais renvoyés à l'interface. Protégez l'accès avec
+`APP_PASSWORD` dès que l'application est joignable depuis Internet.
+
+Pour repartir de zéro : Réglages › Apprentissage et données › **Réinitialiser** (efface les
+données, conserve les connexions), ou supprimer le volume Docker (`docker compose down -v`).
+
 ## Installation depuis le code source
 
 ```bash

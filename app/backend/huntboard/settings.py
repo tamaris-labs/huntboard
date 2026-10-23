@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass, field
+from typing import Any
 
 
 def _env(name: str, default: str = "") -> str:
@@ -59,5 +61,66 @@ class Settings:
     def imap_enabled(self) -> bool:
         return bool(self.imap_host and self.imap_user and self.imap_password)
 
+    # Réglages modifiables depuis l'interface (onglet Réglages › Connexions), enregistrés dans
+    # <data_dir>/settings.json ; ils priment sur le .env.
+    @property
+    def overrides_path(self) -> str:
+        return os.path.join(self.data_dir, "settings.json")
+
+    def load_overrides(self) -> None:
+        try:
+            with open(self.overrides_path, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, ValueError):
+            return
+        for k, v in data.items():
+            if k in EDITABLE:
+                setattr(self, k, int(v) if k == "imap_port" else v)
+
+    def save_overrides(self, patch: dict[str, Any]) -> None:
+        """Applique et enregistre un sous-ensemble de réglages. Un secret vide est ignoré ; None l'efface."""
+        try:
+            with open(self.overrides_path, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, ValueError):
+            data = {}
+        for k, v in patch.items():
+            if k not in EDITABLE:
+                continue
+            if k in SECRETS and v == "":
+                continue
+            v = "" if v is None else v
+            if k == "imap_port":
+                v = int(v or 993)
+            elif isinstance(v, str):
+                v = v.strip()
+            data[k] = v
+            setattr(self, k, v)
+        os.makedirs(self.data_dir, exist_ok=True)
+        with open(self.overrides_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        try:
+            os.chmod(self.overrides_path, 0o600)
+        except OSError:
+            pass
+
+    def public(self) -> dict[str, Any]:
+        """Vue sans secret, pour l'interface."""
+        hint = lambda s: ("…" + s[-4:]) if s and len(s) > 8 else ("défini" if s else "")  # noqa: E731
+        return {
+            "llm": {"enabled": self.llm_enabled, "provider": self.llm_provider, "base_url": self.llm_base_url,
+                    "key_set": bool(self.llm_api_key), "key_hint": hint(self.llm_api_key),
+                    "model_quick": self.model_quick, "model_default": self.model_default, "model_complex": self.model_complex},
+            "imap": {"enabled": self.imap_enabled, "host": self.imap_host, "port": self.imap_port, "user": self.imap_user,
+                     "folder": self.imap_folder, "password_set": bool(self.imap_password)},
+            "notify": {"enabled": bool(self.notify_url), "url_set": bool(self.notify_url)},
+            "veille": {"enabled": self.veille_enabled, "cron": self.veille_cron, "timezone": self.timezone},
+        }
+
+
+EDITABLE = {"llm_provider", "llm_api_key", "llm_base_url", "model_quick", "model_default", "model_complex",
+            "imap_host", "imap_port", "imap_user", "imap_password", "imap_folder", "notify_url"}
+SECRETS = {"llm_api_key", "imap_password", "notify_url"}
 
 settings = Settings()
+settings.load_overrides()

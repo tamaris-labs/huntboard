@@ -27,7 +27,7 @@ day = lambda d: (now + timedelta(days=d)).strftime("%Y-%m-%d")  # noqa: E731
 
 cfg = json.loads((ROOT / "kit/skills/huntboard/config.example.json").read_text(encoding="utf-8"))
 cfg.update({
-    "lang": "fr", "country": "FR", "onboarded": True, "salary_min_k": 60,
+    "lang": "fr", "country": "FR", "onboarded": True, "demo": True, "salary_min_k": 60,
     "home_address": "Nantes (quartier Île de Nantes)",
     "geo": "Domicile : Nantes.\nTrajet de 30 min ou moins : présentiel accepté.\nAu-delà : 2 jours de télétravail minimum.\nTélétravail total accepté partout en France.",
     "roles": "Product manager senior\nEngineering manager\nResponsable produit IA\nChef de projet data",
