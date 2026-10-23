@@ -1,5 +1,7 @@
 # Architecture
 
+*English version: [architecture.md](../en/architecture.md)*
+
 ```mermaid
 flowchart LR
   subgraph Sources
@@ -17,8 +19,8 @@ flowchart LR
 
 | Composant | Fichier | Rôle |
 |---|---|---|
-| Interface | `kit/skills/huntboard/template/huntboard.html` | Page unique bilingue : Offres, Suivi (kanban), Tableau de bord, Coach, Paramètres (CV, critères, sources, apprentissage, données), fiche d'offre, préparation et rédaction, assistant de démarrage |
-| Adaptateur | `app/frontend/shim.js` | Fournit `window.claude.use("db" \| "sample")` au-dessus de l'API, pour réutiliser la page de l'artifact |
+| Interface | `kit/skills/huntboard/template/huntboard.html` | Page unique bilingue : Offres, Suivi (kanban), Tableau de bord, Assistant et notes, Réglages (profil et CV, documents, recherche, apprentissage et données), fiche d'offre, préparation et rédaction, assistant de démarrage, guide |
+| Adaptateur | `app/frontend/shim.js` | Fournit `window.claude.use("db" \| "sample" \| "downloads" \| "assets")` au-dessus de l'API, pour réutiliser la page de l'artifact, et les fonctions propres à l'application (`window.huntboardApp`) |
 | API | `app/backend/huntboard/main.py` | Documents (`/api/db`), modèle (`/api/llm/sample`), veille (`/api/veille/*`), authentification simple |
 | Stockage | `app/backend/huntboard/store.py` | Collections de documents JSON versionnés dans SQLite |
 | Modèle | `app/backend/huntboard/llm.py` | Fournisseurs `anthropic` et `openai` (compatible), trois niveaux de modèle, JSON tolérant, recherche web intégrée au fournisseur ou par service externe (Brave, Tavily, SearXNG) — voir [moteurs-ia.md](moteurs-ia.md) |
@@ -30,12 +32,17 @@ flowchart LR
    8 tendances, chacune justifiée et plafonnée à ±10 points.
 2. **Alertes e-mail** : lecture IMAP des expéditeurs configurés (`ALERT_SENDERS`) ;
    parseur déterministe pour LinkedIn, extraction par le modèle pour les autres.
-3. **Web** : avec Claude, recherche guidée par la liste de sources et leurs consignes ;
-   avec un autre fournisseur, téléchargement des pages listées et extraction.
-4. **Dédoublonnage** par identifiant LinkedIn ou couple entreprise/intitulé.
-5. **Notation** par lots de 15 avec les critères explicites et les tendances.
-6. **Écriture** des 25 meilleures offres et 5 recherches d'associés au plus, puis résumé
-   et notification.
+3. **Web** : recherche guidée par la liste de sources et leurs consignes, avec la recherche
+   intégrée du fournisseur ou un service externe (Brave, Tavily, SearXNG) ; sans recherche web,
+   téléchargement des pages listées et extraction.
+4. **Accusés de réception** : les e-mails de confirmation de candidature, quel que soit
+   l'expéditeur, passent l'offre à « Candidature envoyée » ou la créent ; les offres à évaluer
+   (ajouts manuels, candidatures directes) sont notées.
+5. **Dédoublonnage** par identifiant LinkedIn ou couple entreprise/intitulé.
+6. **Notation** par lots de 15 avec les critères explicites et les tendances.
+7. **Écriture** des 25 meilleures offres et 5 recherches d'associés au plus, pistes
+   complémentaires, suivi des e-mails, texte des annonces étudiées, puis (le lundi) une ou deux
+   sources suggérées, résumé et notification.
 
 ## Équivalence avec le kit Claude
 

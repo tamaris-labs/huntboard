@@ -1,15 +1,18 @@
 # Paramétrage
 
+*English version: [settings.md](../en/settings.md)*
+
 Au premier lancement, un **assistant de démarrage** guide la configuration : langue et pays,
 import du CV (PDF, Word ou texte), analyse du CV par l'IA qui propose profil et critères,
 vérification des critères, puis sources recommandées pour le pays. Tout reste ensuite
-modifiable dans l'onglet **Paramètres**, organisé en quatre groupes : Profil et CV, Documents, Recherche (critères, pistes complémentaires, sources) et Apprentissage et données.
+modifiable dans l'onglet **Réglages**, organisé en quatre groupes : Profil et CV, Documents,
+Recherche (critères, pistes complémentaires, sources) et Apprentissage et données.
 
 <p>
-<img src="screenshots/settings-mobile.png" width="200" alt="Complétude">
-<img src="screenshots/tuto-12-tracks.png" width="200" alt="Pistes">
-<img src="screenshots/tuto-11-documents.png" width="200" alt="Documents">
-<img src="screenshots/tuto-14-learning.png" width="200" alt="Apprentissage">
+<img src="../screenshots/settings-mobile.png" width="200" alt="Complétude">
+<img src="../screenshots/tuto-12-tracks.png" width="200" alt="Pistes">
+<img src="../screenshots/tuto-11-documents.png" width="200" alt="Documents">
+<img src="../screenshots/tuto-14-learning.png" width="200" alt="Apprentissage">
 </p>
 
 Pas à pas : [tutoriel.md](tutoriel.md).
@@ -22,9 +25,9 @@ Pas à pas : [tutoriel.md](tutoriel.md).
 | Critères | Rémunération plancher, archivage, adresse du domicile (privée, plaçable sur la carte), domicile et règles de trajet et de télétravail, postes, domaines, contrats, exclusions, pondération, recherche d'associés, consignes libres ; bouton « Compléter avec l'IA à partir du CV » |
 | Sources | Ajout en un clic des sources recommandées pour un pays, activation, ajout de sources personnalisées avec consigne de lecture, rendement de chaque source (offres trouvées et suivies), **suggestions de sources par l'IA** et vérification sur le web (voir ci-dessous) |
 | Apprentissage | Tendances tirées de vos choix, avec leur effet et leur justification ; chacune est révocable |
-| Langue et données | Langue de l'interface et des textes générés, pays principal, export et import JSON, relance de l'assistant |
+| Apprentissage et données | Langue de l'interface et des textes générés, pays principal, connexions (application autonome), export et import JSON, réinitialisation, relance de l'assistant de démarrage |
 
-Les suggestions de l'IA (analyse du CV, onglet Coach, « Compléter avec l'IA ») ne s'appliquent
+Les suggestions de l'IA (analyse du CV, onglet Assistant, « Compléter avec l'IA ») ne s'appliquent
 jamais d'elles-mêmes : elles s'affichent champ par champ, à cocher puis à appliquer.
 
 ## Conseils
@@ -34,6 +37,10 @@ jamais d'elles-mêmes : elles s'affichent champ par champ, à cocher puis à app
 - **Sources** : la consigne de chaque source guide la veille (« lecture directe refusée,
   passer par la recherche web », « filtrer par région avec ?locations=… »). Voir
   [sources.md](sources.md) pour la liste par pays.
+- **Alertes e-mail** : créez des alertes précises (intitulé + lieu ou télétravail) sur LinkedIn,
+  Indeed, HelloWork ; elles sont lues par e-mail, sans jamais accéder à vos comptes.
+- **Suivi** : renseignez la prochaine action et son échéance dans la fiche d'offre ; le tableau
+  de bord les remonte dans « À faire ».
 
 ## Suggestions de sources
 
@@ -58,10 +65,6 @@ Rien n'est ajouté ni désactivé sans votre choix. Le fonctionnement diffère s
 | Suggestions IA | Usage Claude du compte, d'après les connaissances du modèle : la page n'a pas accès au web (environnement isolé), les adresses sont donc marquées « à vérifier » | Moteur d'IA configuré ; les suggestions du bouton web s'appuient sur la recherche web configurée ([moteurs-ia.md](moteurs-ia.md)) |
 | Vérification sur le web | Tâche planifiée « Huntboard – sources », sans horaire, déclenchée par le bouton via le connecteur « Claude Code Remote » ; résultats en quelques minutes, avec notification. À activer une fois en demandant à Claude « Active la vérification des sources de mon Huntboard » ; le premier clic demande d'autoriser le connecteur pour la page | Serveur de l'application : lecture des pages et recherche web (intégrée au fournisseur, ou Brave, Tavily, SearXNG), résultat en quelques secondes |
 | Proposition du lundi | Étape 10 ter de la tâche de veille | Intégrée au passage du lundi |
-- **Alertes e-mail** : créez des alertes précises (intitulé + lieu ou télétravail) sur LinkedIn,
-  Indeed, HelloWork ; elles sont lues par e-mail, sans jamais accéder à vos comptes.
-- **Suivi** : renseignez la prochaine action et son échéance dans la fiche d'offre ; le tableau
-  de bord les remonte dans « À faire ».
 
 ## Tableau de bord
 
@@ -74,7 +77,6 @@ Rien n'est ajouté ni désactivé sans votre choix. Le fonctionnement diffère s
   couleur selon l'étape (entretien ou offre, candidature, à creuser, nouvelle) ; un point ouvre la
   liste des offres du lieu ; les entretiens à venir sont listés à côté.
 
-
 ## Fiche d'offre
 
 - **Contacts** : nom, rôle, e-mail et téléphone des interlocuteurs (liens directs pour écrire ou
@@ -86,7 +88,7 @@ Rien n'est ajouté ni désactivé sans votre choix. Le fonctionnement diffère s
   enregistrées) que dans Documents, ainsi que relance, remerciement et message LinkedIn ; texte
   modifiable, copiable, téléchargeable et enregistrable dans vos documents.
 - **Écouter** : lecture à voix haute du point du jour, de la fiche d'entretien, du débrief, des
-  réponses du coach et du texte de l'annonce, avec la voix du téléphone.
+  réponses de l'assistant et du texte de l'annonce, avec la voix du téléphone.
 
 ## Notifications
 

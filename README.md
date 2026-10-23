@@ -5,15 +5,15 @@ an application pipeline, contacts and kept posting texts, a map, an AI assistant
 data and proposes actions you validate, CV import and translation, cover letters and interview
 preparation. Bilingual interface (French / English), usable on a phone.
 
-*[Version française plus bas](#français)*
+**English** · [Français](README.fr.md)
 
 <p align="center">
-  <img src="docs/screenshots/offers-mobile.png" width="200" alt="Offers">
-  <img src="docs/screenshots/assistant-mobile.png" width="200" alt="Assistant">
-  <img src="docs/screenshots/offer-contacts-mobile.png" width="200" alt="Offer, contacts and kept posting">
-  <img src="docs/screenshots/settings-mobile.png" width="200" alt="Settings completeness">
+  <img src="docs/screenshots/en/offers-mobile.png" width="200" alt="Offers">
+  <img src="docs/screenshots/en/assistant-mobile.png" width="200" alt="Assistant">
+  <img src="docs/screenshots/en/offer-contacts-mobile.png" width="200" alt="Offer, contacts and kept posting">
+  <img src="docs/screenshots/en/settings-mobile.png" width="200" alt="Settings completeness">
 </p>
-<p align="center"><img src="docs/screenshots/dashboard-desktop.png" width="820" alt="Dashboard"></p>
+<p align="center"><img src="docs/screenshots/en/dashboard-desktop.png" width="820" alt="Dashboard"></p>
 
 > Screenshots use entirely fictional demo data (`scripts/demo_data.py`).
 
@@ -26,12 +26,12 @@ only manual tracking remains.
 | Distribution | What you need |
 |---|---|
 | **Claude kit** | A Claude account whose plan allows artifacts and scheduled tasks. The page uses your Claude usage (you are asked once to allow it). A mail connector (Gmail) is optional but recommended for e-mail alerts. |
-| **Self-hosted app** | An API key: **Anthropic** (recommended), or any OpenAI-compatible API (OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter) or a local model (Ollama, LM Studio). Web search comes from the provider when it has one (Claude, OpenAI, Gemini, Grok, OpenRouter) or from Brave, Tavily or a self-hosted SearXNG — so a fully local setup works too. See [AI engines and web search](docs/moteurs-ia.md). Set a spending cap with your provider. |
+| **Self-hosted app** | An API key: **Anthropic** (recommended), or any OpenAI-compatible API (OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter) or a local model (Ollama, LM Studio). Web search comes from the provider when it has one (Claude, OpenAI, Gemini, Grok, OpenRouter) or from Brave, Tavily or a self-hosted SearXNG — so a fully local setup works too. See [AI engines and web search](docs/en/ai-engines.md). Set a spending cap with your provider. |
 
 ## What it does
 
 - **Daily watch** — collects offers from job boards, company pages and your e-mail alerts
-  (LinkedIn, Indeed, HelloWork… LinkedIn is never scraped, see [limits](docs/limitations.md)),
+  (LinkedIn, Indeed, HelloWork… LinkedIn is never scraped, see [limits](docs/en/limitations.md)),
   scores each out of 100 against your rules (commute and remote days, salary floor, roles,
   fields) with a visible breakdown. Each morning: a notification with the news, or a short,
   factual encouragement when nothing is new.
@@ -42,6 +42,8 @@ only manual tracking remains.
   otherwise.
 - **Pipeline** — kanban with an offer page: dates, next action, notes, history, **contacts**
   (e-mail, phone), and the **full posting text kept** as soon as the offer is worth exploring.
+  Application acknowledgements (job boards, Workday, SmartRecruiters…) are recorded
+  automatically.
 - **Assistant** — ask anything about your offers, applications, contacts, notes or settings; it
   looks your data up and **proposes changes that you validate** with a tap or by answering
   yes / no, in writing or by voice.
@@ -62,7 +64,7 @@ only manual tracking remains.
 |---|---|---|
 | Runs | In your Claude account (artifact + scheduled task) | On your server (Docker) |
 | Install | Import the skill, then ask Claude "Set up my Huntboard" | `docker compose up -d` |
-| AI | Your Claude plan | Your API key, pay as you go |
+| AI | Your Claude plan | Your API key (pay as you go) or a local model |
 
 Both share **the same page** (`kit/skills/huntboard/template/huntboard.html`).
 
@@ -81,9 +83,10 @@ Or from source: `git clone https://github.com/tamaris-labs/huntboard.git && cd h
 `cp .env.example .env`, then `docker compose up -d --build`.
 
 Open `http://localhost:8000`; the setup assistant starts. Image: `ghcr.io/tamaris-labs/huntboard`
-(`latest`, or a version number). Details: [docs/deploiement.md](docs/deploiement.md).
+(`latest`, or a version number). Details: [docs/en/deployment.md](docs/en/deployment.md).
 
-To try it with fictional data: `HUNTBOARD_DATA_DIR=./demo-data python scripts/demo_data.py`.
+To try it with fictional data: `HUNTBOARD_DATA_DIR=./demo-data python scripts/demo_data.py`
+(add `HUNTBOARD_DEMO_LANG=en` for English demo data).
 
 ## Quick start — Claude kit
 
@@ -92,10 +95,11 @@ add it as a skill in Claude, then ask "Set up my Huntboard". See [kit/README.md]
 
 ## Docs
 
-[Presentation](docs/presentation.md) · [Tutorial (FR)](docs/tutoriel.md) · [Architecture](docs/architecture.md) ·
-[Deployment](docs/deploiement.md) · [AI engines and web search](docs/moteurs-ia.md) · [Settings](docs/parametrage.md) ·
-[Job sources by country](docs/sources.md) · [Platform and API limits](docs/limitations.md) ·
-[Contributing with Claude Code](CLAUDE.md)
+[Presentation](docs/en/presentation.md) · [Tutorial](docs/en/tutorial.md) · [Architecture](docs/en/architecture.md) ·
+[Deployment](docs/en/deployment.md) · [AI engines and web search](docs/en/ai-engines.md) · [Settings](docs/en/settings.md) ·
+[Job sources by country](docs/en/sources.md) · [Platform and API limits](docs/en/limitations.md) ·
+[Contributing with Claude Code](CLAUDE.md) (in English) ·
+[All docs, French and English](docs/README.md)
 
 ## Privacy
 
@@ -115,24 +119,3 @@ Express, Licence Ouverte / Etalab).
 
 [MIT](LICENSE)
 
----
-
-## Français
-
-**Huntboard** réunit votre recherche d'emploi sur un seul tableau : veille quotidienne d'offres
-notées selon vos critères, tri qui entraîne la notation, pistes séparées (freelance,
-international, associés), suivi des candidatures avec contacts et texte d'annonce conservé,
-carte, assistant IA qui consulte vos données et propose des actions que vous validez (par écrit
-ou à la voix), notes dictées, CV et traductions, lettres de motivation, préparation d'entretien
-et lecture à voix haute. Interface en français ou en anglais, utilisable sur téléphone.
-
-**Prérequis : une connexion à une IA.** Sans elle, l'application perd l'essentiel de son
-intérêt (ni veille, ni notation, ni assistant). Kit Claude : un compte Claude permettant les
-artefacts et les tâches planifiées. Application autonome : une clé d'API (Anthropic recommandé,
-ou OpenAI, Gemini, Grok, Mistral, DeepSeek, OpenRouter) ou un modèle local (Ollama), avec la
-recherche web du fournisseur ou un service externe (Brave, Tavily, SearXNG) :
-[moteurs-ia.md](docs/moteurs-ia.md).
-
-Deux distributions partagent la même page : le **kit Claude** et l'**application autonome**
-(FastAPI, SQLite, Docker). Présentation détaillée : [docs/presentation.md](docs/presentation.md) ; prise en main pas à pas : [docs/tutoriel.md](docs/tutoriel.md).
-Licence MIT.

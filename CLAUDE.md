@@ -14,7 +14,7 @@ A personal job-search board shipped two ways that share one interface:
    `settings.web_search_backend`, `llm.web_research_json`): provider-native (Anthropic, OpenAI and
    xAI Responses, OpenRouter `:online`, Gemini grounding) or an external service (Brave, Tavily,
    SearXNG) driven through a `web_search`/`read_page` tool loop that works with any tool-calling
-   model. See `docs/moteurs-ia.md`.
+   model. See `docs/en/ai-engines.md` (FR: `docs/fr/moteurs-ia.md`).
 
 ## Core principle: one page
 
@@ -97,7 +97,7 @@ Business rules:
 - Every run notifies: news, or a short factual encouragement in the user's language when nothing is new.
 - One letter generator (`letterPrompt`) behind two entry points: Documents and Prepare › Writing.
 - At most 3 `far` offers per run; explicit criteria always override learned trends.
-- LinkedIn is never read directly: e-mail alerts only (see `docs/limitations.md`).
+- LinkedIn is never read directly: e-mail alerts only (see `docs/en/limitations.md`).
 - Offers with a `track` stay out of the main feed (unless the track has `in_main`), out of learning
   and out of notifications (unless `notify`).
 - Map: two views, an SVG radar around home and a geographic map drawn from a vector basemap
@@ -110,7 +110,8 @@ Business rules:
 app/backend/huntboard/  main.py · store.py · llm.py · veille.py · sources/{email_imap,web}.py
 app/frontend/shim.js
 kit/skills/huntboard/   SKILL.md · template/huntboard.html · config.example.json · prompts/veille.md
-docs/  scripts/check_personal_data.py
+docs/{fr,en}/  docs/screenshots/{,en/}  scripts/{check_personal_data,demo_data}.py
+README.md (EN) · README.fr.md · kit/README.md · kit/README.fr.md
 ```
 
 ## Commands
@@ -131,3 +132,10 @@ python scripts/check_personal_data.py --history                  # before every 
 - Usable on a phone (~400 px) with no horizontal page scroll.
 - No secrets or personal data in the repo: `.env`, `data/` and `.personal-data-denylist` are ignored.
 - Any new logic in `veille.py` or `store.py` comes with a test.
+- User documentation exists in **both languages with the same content**: `docs/fr/*.md` and
+  `docs/en/*.md` (names: presentation, tutoriel/tutorial, architecture, deploiement/deployment,
+  parametrage/settings, sources, limitations, moteurs-ia/ai-engines), `README.md` /
+  `README.fr.md`, `kit/README.md` / `kit/README.fr.md`. Any change to one language goes into the
+  other in the same commit. French docs use `docs/screenshots/`, English docs
+  `docs/screenshots/en/` (English demo data: `HUNTBOARD_DEMO_LANG=en`). `CLAUDE.md` and
+  `SKILL.md` stay in English.

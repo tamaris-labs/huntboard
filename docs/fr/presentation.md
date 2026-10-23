@@ -1,5 +1,7 @@
 # Huntboard — présentation
 
+*English version: [presentation.md](../en/presentation.md)*
+
 Huntboard est un tableau de bord personnel de recherche d'emploi. Il repère chaque matin les
 offres qui correspondent à vos critères, vous aide à les trier, à suivre vos candidatures et à
 préparer vos entretiens, avec un assistant IA qui connaît vos données et agit seulement avec
@@ -34,7 +36,7 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 ## Les fonctions
 
 ### Offres et veille quotidienne
-<img src="screenshots/offers-mobile.png" width="260" align="right" alt="Offres">
+<img src="../screenshots/offers-mobile.png" width="260" align="right" alt="Offres">
 
 - Collecte sur les portails, les pages carrières et vos alertes e-mail (LinkedIn n'est jamais
   lu directement : voir [limitations.md](limitations.md)).
@@ -49,7 +51,7 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 <br clear="right">
 
 ### Suivi, contacts et annonces conservées
-<img src="screenshots/offer-contacts-mobile.png" width="260" align="right" alt="Fiche d'offre">
+<img src="../screenshots/offer-contacts-mobile.png" width="260" align="right" alt="Fiche d'offre">
 
 - Kanban des candidatures (à creuser, envoyée, entretien, proposition, non retenue).
 - Fiche d'offre : dates, prochaine action et échéance, notes, historique, lien d'agenda.
@@ -57,11 +59,14 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
   vos e-mails et les annonces.
 - **Texte intégral de l'annonce conservé** dès qu'une offre passe « À creuser », même si
   l'annonce disparaît ensuite.
+- **Accusés de réception de candidature** (sites d'annonces, Workday, SmartRecruiters…)
+  enregistrés automatiquement : l'offre passe « Candidature envoyée », ou est créée si elle
+  manquait.
 
 <br clear="right">
 
 ### Assistant intégré
-<img src="screenshots/assistant-mobile.png" width="260" align="right" alt="Assistant">
+<img src="../screenshots/assistant-mobile.png" width="260" align="right" alt="Assistant">
 
 - Répond sur l'ensemble de vos données : offres, candidatures, contacts, annonces, notes,
   documents, CV, réglages, objectifs de la semaine.
@@ -74,7 +79,7 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 <br clear="right">
 
 ### Tableau de bord et carte
-<img src="screenshots/dashboard-desktop.png" width="100%" alt="Tableau de bord">
+<img src="../screenshots/dashboard-desktop.png" width="100%" alt="Tableau de bord">
 
 - **Élan de la semaine** : objectifs (candidatures, offres triées, contacts réseau), série de
   jours d'activité, prochain petit pas, journal des avancées, point du jour à écouter.
@@ -82,10 +87,10 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
   zoom et déplacement, ou vue radar centrée sur le domicile.
 - Statistiques : étapes, rythme de la veille, rendement des sources.
 
-<img src="screenshots/map-desktop.png" width="100%" alt="Carte">
+<img src="../screenshots/map-desktop.png" width="100%" alt="Carte">
 
 ### Paramétrage assisté
-<img src="screenshots/settings-mobile.png" width="260" align="right" alt="Paramétrage">
+<img src="../screenshots/settings-mobile.png" width="260" align="right" alt="Paramétrage">
 
 - Assistant de démarrage : langue, pays, CV, critères, sources recommandées (dix pays).
 - Analyse du CV qui propose profil et critères, à valider champ par champ.
@@ -98,7 +103,7 @@ Pour une prise en main pas à pas, voir le [tutoriel](tutoriel.md).
 <br clear="right">
 
 ### Documents, lettres et entretiens
-<img src="screenshots/letters-mobile.png" width="260" align="right" alt="Lettres">
+<img src="../screenshots/letters-mobile.png" width="260" align="right" alt="Lettres">
 
 - CV originaux et traduits conservés et téléchargeables (sept langues de traduction).
 - Générateur de lettre de motivation : sélection de l'offre par recherche et filtres, langue,

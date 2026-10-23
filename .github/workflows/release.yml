@@ -59,4 +59,4 @@ jobs:
           make_latest: ${{ steps.v.outputs.prerelease == 'true' && 'false' || 'true' }}
           body: |
             - Claude kit: download `huntboard-skill.zip`, add it as a skill in Claude, then ask "Set up my Huntboard".
-            - Self-hosted: `docker pull ${{ steps.img.outputs.name }}:${{ steps.v.outputs.version }}` (see docs/deploiement.md).
+            - Self-hosted: `docker pull ${{ steps.img.outputs.name }}:${{ steps.v.outputs.version }}` (see docs/en/deployment.md).

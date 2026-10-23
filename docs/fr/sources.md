@@ -1,5 +1,7 @@
 # Sources d'offres par pays
 
+*English version: [sources.md](../en/sources.md)*
+
 Liste de départ pour composer la configuration des sources. Les conditions d'accès changent
 souvent : la colonne « Accès » indique la méthode conseillée pour la veille, à vérifier lors
 du premier passage.
@@ -127,7 +129,8 @@ veille ; *API* API officielle disponible ; *Non* lecture automatisée interdite 
    avant les job boards ; chercher via `site:` sur Lever, Greenhouse, Ashby, Workday.
 4. **Écosystème local** (French Tech, pôles, incubateurs, clusters) pour les startups et les
    recherches d'associés.
-5. **Mesurer le rendement** : le tableau de bord indique par source le nombre d'offres, le
-   score moyen et les offres retenues ; désactiver ce qui ne produit rien après trois semaines.
+5. **Mesurer le rendement** : chaque source affiche les offres trouvées et suivies ; le bouton
+   *Suggérer des sources avec l'IA* signale les sources peu productives. Désactiver ce qui ne
+   produit rien après trois semaines.
 
 Les raisons de ces modes d'accès (API fermées, conditions d'utilisation) sont détaillées dans [limitations.md](limitations.md).

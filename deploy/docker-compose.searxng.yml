@@ -1,7 +1,7 @@
 # Huntboard + SearXNG (moteur de recherche auto-hébergé, sans clé) à partir de l'image publiée.
 # Usage : placer ce fichier, searxng/settings.yml et un .env dans un dossier, puis
 #   docker compose -f docker-compose.searxng.yml up -d
-# Dans le .env : WEB_SEARCH=searxng et SEARXNG_URL=http://searxng:8080 (voir docs/moteurs-ia.md).
+# Dans le .env : WEB_SEARCH=searxng et SEARXNG_URL=http://searxng:8080 (voir docs/fr/moteurs-ia.md, en anglais docs/en/ai-engines.md).
 services:
   huntboard:
     image: ghcr.io/tamaris-labs/huntboard:latest
