@@ -17,7 +17,7 @@
     {
       "name": "Welcome to the Jungle",
       "url": "https://www.welcometothejungle.com/fr/jobs",
-      "note": "Pages de recherche peu lisibles directement : chercher sur le domaine welcometothejungle.com puis lire les fiches d'offre.",
+      "note": "Alertes e-mail inopérantes en ce moment ; pages de recherche peu lisibles directement. Lire les pages de listes publiques, lisibles sans script, du type https://www.welcometothejungle.com/fr/pages/emploi-<métier>-<ville> (retrouvées par recherche « site:welcometothejungle.com/fr/pages emploi <métier> »), puis les fiches d'offre ; si une fiche en /fr/ est vide, remplacer /fr/ par /en/.",
       "active": true
     },
     {

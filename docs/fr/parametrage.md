@@ -35,7 +35,9 @@ jamais d'elles-mêmes : elles s'affichent champ par champ, à cocher puis à app
 - **Tri** : utilisez *Intéressé* et *Écarter* en cochant le motif ; au bout d'une dizaine de
   choix, la section Apprentissage se remplit et la notation s'affine.
 - **Sources** : la consigne de chaque source guide la veille (« lecture directe refusée,
-  passer par la recherche web », « filtrer par région avec ?locations=… »). Voir
+  passer par la recherche web », « filtrer par région avec ?locations=… »). Les adresses de
+  pages citées dans la consigne (par exemple une page de liste « Emploi CTO à Paris ») sont
+  aussi lues, y compris par l'application autonome sans recherche web. Voir
   [sources.md](sources.md) pour la liste par pays.
 - **Alertes e-mail** : créez des alertes précises (intitulé + lieu ou télétravail) sur LinkedIn,
   Indeed, HelloWork ; elles sont lues par e-mail, sans jamais accéder à vos comptes.

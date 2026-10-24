@@ -16,7 +16,7 @@ available; *No* automated reading forbidden or blocked.
 | LinkedIn Jobs | General | Alert | Never read directly (terms of use) |
 | Indeed | Aggregator | Alert | Pages often blocked to robots |
 | Glassdoor | Aggregator + reviews | Alert | Also useful for pay and employee reviews |
-| Welcome to the Jungle | Startups, tech, consulting | Search | FR, ES, CZ, SK, US |
+| Welcome to the Jungle | Startups, tech, consulting | Search + list pages | FR, ES, CZ, SK, US; e-mail alerts not working in October 2026: read the public list pages (`/fr/pages/emploi-<job>-<city>`) |
 | Wellfound (formerly AngelList) | Startups | Search | Strong on funded startups |
 | Otta | Tech, startups | Alert | UK, Europe, US |
 | Remote OK, We Work Remotely, Remotive | Fully remote | Web | Mostly English-speaking |
@@ -34,7 +34,7 @@ available; *No* automated reading forbidden or blocked.
 | France Travail | Public, general | API | "Offres d'emploi" API on francetravail.io; check the update date |
 | HelloWork | General | Search + Alert | |
 | Cadremploi | Managers | Search + Alert | |
-| Welcome to the Jungle | Startups, tech | Search | |
+| Welcome to the Jungle | Startups, tech | Search + list pages | Partly relayed by LinkedIn: a LinkedIn alert on the same job catches part of the offers |
 | Free-Work | IT, permanent and freelance | Web | Region filters in the URL |
 | JobTeaser | Graduates | No | Of little use for experienced profiles |
 | Choisir le service public, Emploi-Territorial, Place de l'emploi public | Civil service | Web | |

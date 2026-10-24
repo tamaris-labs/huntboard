@@ -35,7 +35,9 @@ they are shown field by field, to tick and then apply.
 - **Triage**: use *Interested* and *Discard* with the reason ticked; after a dozen choices, the
   Learning section fills up and scoring becomes sharper.
 - **Sources**: each source's instruction guides the watch ("direct reading refused, use web
-  search", "filter by region with ?locations=…"). See [sources.md](sources.md) for the list by
+  search", "filter by region with ?locations=…"). Page addresses cited in the instruction (for
+  example a "CTO jobs in Paris" list page) are also read, including by the self-hosted app
+  without web search. See [sources.md](sources.md) for the list by
   country.
 - **E-mail alerts**: create precise alerts (title + location or remote) on LinkedIn, Indeed,
   HelloWork; they are read by e-mail, without ever accessing your accounts.

@@ -364,3 +364,23 @@ def test_research_tool_loop():
                                search=lambda q: [{"title": "Offre", "url": "https://jobs.example.com/1", "snippet": q}],
                                read=lambda u: "Texte de l'annonce")
     assert out == '[{"title": "CTO"}]' and "cto marseille" in seen[0]
+
+
+def test_source_urls_and_fetch_fallback(monkeypatch):
+    from types import SimpleNamespace as R
+
+    from huntboard.sources import web
+
+    src = {"name": "Welcome to the Jungle", "url": "https://www.welcometothejungle.com/fr/jobs",
+           "note": "Lire https://www.welcometothejungle.com/fr/pages/emploi-cto-paris et https://www.welcometothejungle.com/fr/pages/emploi-<métier>-<ville>, "
+                   "jamais https://www.linkedin.com/jobs ni https://api.welcometothejungle.com/x."}
+    assert web.source_urls(src) == ["https://www.welcometothejungle.com/fr/jobs", "https://www.welcometothejungle.com/fr/pages/emploi-cto-paris"]
+    seen = []
+
+    def get(u):
+        seen.append(u)
+        return R(text="<p>CTO hands-on, Bordeaux</p>", raise_for_status=lambda: None)
+
+    monkeypatch.setattr(web.llm, "complete_json", lambda prompt, tier="quick": [{"title": "CTO", "url": "https://x.example.com/1"}])
+    out = web._search_fetch({"sources": [src, {"name": "Off", "url": "https://off.example.com", "active": False}]}, 25, get=get)
+    assert seen == web.source_urls(src) and out[0]["source"] == "Welcome to the Jungle"

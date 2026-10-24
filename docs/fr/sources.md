@@ -17,7 +17,7 @@ veille ; *API* API officielle disponible ; *Non* lecture automatisée interdite 
 | LinkedIn Jobs | Généraliste | Alerte | Jamais de lecture directe (conditions d'utilisation) |
 | Indeed | Agrégateur | Alerte | Pages souvent bloquées aux robots |
 | Glassdoor | Agrégateur + avis | Alerte | Utile aussi pour les salaires et avis d'employés |
-| Welcome to the Jungle | Startups, tech, conseil | Recherche | FR, ES, CZ, SK, US |
+| Welcome to the Jungle | Startups, tech, conseil | Recherche + pages de listes | FR, ES, CZ, SK, US ; alertes e-mail inopérantes en octobre 2026 : lire les pages de listes publiques (`/fr/pages/emploi-<métier>-<ville>`) |
 | Wellfound (ex-AngelList) | Startups | Recherche | Fort sur les startups financées |
 | Otta | Tech, startups | Alerte | UK, Europe, US |
 | Remote OK, We Work Remotely, Remotive | Télétravail total | Web | Majoritairement anglophone |
@@ -35,7 +35,7 @@ veille ; *API* API officielle disponible ; *Non* lecture automatisée interdite 
 | France Travail | Généraliste public | API | API « Offres d'emploi » sur francetravail.io ; vérifier la date d'actualisation |
 | HelloWork | Généraliste | Recherche + Alerte | |
 | Cadremploi | Cadres | Recherche + Alerte | |
-| Welcome to the Jungle | Startups, tech | Recherche | |
+| Welcome to the Jungle | Startups, tech | Recherche + pages de listes | Relais partiel par LinkedIn : une alerte LinkedIn sur le même métier rattrape une partie des offres |
 | Free-Work | IT, CDI et freelance | Web | Filtres par région dans l'URL |
 | JobTeaser | Jeunes diplômés | Non | Peu pertinent pour profils expérimentés |
 | Choisir le service public, Emploi-Territorial, Place de l'emploi public | Fonction publique | Web | |

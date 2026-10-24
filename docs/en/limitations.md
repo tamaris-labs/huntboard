@@ -17,7 +17,7 @@ State as observed in October 2026. Platform terms change: check them before chan
 | **France Travail** | **Open "Offres d'emploi v2" API**: free registration on francetravail.io, OAuth2 authentication (client credentials). 150 results per page, at most 1,150 per query, about 10 calls per second. | Possible but pointless: the API is the right way. | Web search; API connection planned (see § 5). |
 | **Adzuna** (aggregator) | API with a free key, reserved for personal job search and academic research; "Adzuna" mention and link required when displayed; commercial use requires a licence. | Redirect links sometimes unusable: find the original posting. | Web search; API possible for personal use. |
 | **APEC** | No known public offer search API. | Pages protected against robots. | Web search and e-mail alerts. |
-| **Welcome to the Jungle** | No known public offer search API (do not use the site's internal APIs). | Reading of public pages, at a moderate pace. | Web search. |
+| **Welcome to the Jungle** | No known public offer search API (do not use the site's internal APIs). E-mail alerts not working in October 2026. | Reading of public pages, at a moderate pace; list pages (`/fr/pages/emploi-<job>-<city>`) read without scripts, the site search does not. | Web search and list pages cited in the source instruction; a LinkedIn alert on the same job catches part of the offers, which LinkedIn republishes. |
 | **HelloWork, Cadremploi, Michael Page, agencies** | No public API. | Varies by site. | E-mail alerts and web search. |
 | **Glassdoor** | No open public API. | Pages reserved for signed-in accounts. | Not used, except through e-mail alerts. |
 

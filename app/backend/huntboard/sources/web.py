@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 from .. import llm
@@ -72,19 +73,32 @@ Rapporte au plus {max_jobs} offres d'emploi et {max_partners} recherches d'assoc
         return _search_fetch(config, max_jobs)
 
 
-def _search_fetch(config: dict[str, Any], max_jobs: int) -> list[dict[str, Any]]:
+URL_RE = re.compile(r"https?://[^\s\"')\]»]+")
+
+
+def source_urls(source: dict[str, Any]) -> list[str]:
+    """Pages à lire pour une source : son adresse, puis les pages de listes citées dans sa consigne
+    (ex. pages « Emploi CTO à Paris » de Welcome to the Jungle), hors LinkedIn et hors gabarits."""
+    out: list[str] = []
+    for u in [source.get("url") or ""] + URL_RE.findall(source.get("note") or ""):
+        u = u.rstrip(".,;:")
+        if u.startswith("http") and "linkedin.com" not in u and "<" not in u and "api." not in u and u not in out:
+            out.append(u)
+    return out[:6]
+
+
+def _search_fetch(config: dict[str, Any], max_jobs: int, get=None) -> list[dict[str, Any]]:
     import httpx
 
     from .email_imap import html_to_text
 
     found: list[dict[str, Any]] = []
     headers = {"User-Agent": "Mozilla/5.0 (huntboard; personal use)"}
-    for s in config.get("sources", []):
-        url = s.get("url")
-        if s.get("active") is False or not url or "linkedin.com" in url:
-            continue
+    get = get or (lambda u: httpx.get(u, headers=headers, timeout=20, follow_redirects=True))
+    pages = [(s, u) for s in config.get("sources", []) if s.get("active") is not False for u in source_urls(s)]
+    for s, url in pages:
         try:
-            r = httpx.get(url, headers=headers, timeout=20, follow_redirects=True)
+            r = get(url)
             r.raise_for_status()
         except Exception as e:  # noqa: BLE001
             log.info("Source %s inaccessible : %s", s.get("name"), e)
